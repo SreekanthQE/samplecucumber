@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@cucumber/cucumber": "*",
+    "@cucumber/cucumber": "^11.3.0",
     "@playwright/test": "^1.40",
     "allure-commandline": "^2.34.0",
     "allure-playwright": "^2.0.0-beta.15",
