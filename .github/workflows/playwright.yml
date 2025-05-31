@@ -53,3 +53,14 @@ jobs:
           else
             npx cucumber-js ${{ github.event.inputs.feature }} --exit
           fi
+
+      - name: Generate Allure Report
+        if: always()
+        run: npm run report:generate
+
+      - name: Upload Allure Report to GitHub Artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report

@@ -7,7 +7,9 @@
     "regression": "npx playwright test",
     "webTests": "npx playwright test --grep @Web",
     "APITests": "npx playwright test --grep @API",
-    "SafariNewConfig": "npx playwright test --config playwright.config1.js --project=safari"
+    "SafariNewConfig": "npx playwright test --config playwright.config1.js --project=safari",
+    "report:generate": "allure generate allure-results --clean -o allure-report",
+  "report:open": "allure open allure-report"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
   "devDependencies": {
     "@cucumber/cucumber": "*",
     "@playwright/test": "^1.40",
+    "allure-commandline": "^2.34.0",
     "allure-playwright": "^2.0.0-beta.15",
     "typescript": "^5.4.5"
   },
