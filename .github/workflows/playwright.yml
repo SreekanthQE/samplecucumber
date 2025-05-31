@@ -19,11 +19,18 @@ on:
         description: 'Feature file path (e.g. features/login.feature)'
         required: false
         default: 'features'
+      baseURL:
+        description: 'Base URL to test against'
+        required: true
+        default: 'https://automationteststore.com'
+      scenario:
+        description: 'Scenario title (e.g. Validate successful login)'
+        required: false
 
 jobs:
   run-cucumber-playwright:
     runs-on: ubuntu-latest
-    retries: 2   # 🔁 Retry job on failure
+    retries: 2  # 🔁 Retry job on failure
 
     steps:
       - name: Checkout code
@@ -37,31 +44,36 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright browsers
         run: npx playwright install
 
-      - name: Run Cucumber Tests with Trace
+      - name: Run Cucumber Tests with Trace 📦
         run: |
           echo "BROWSER=${{ github.event.inputs.browser }}"
           echo "TAG=${{ github.event.inputs.tag }}"
           echo "FEATURE=${{ github.event.inputs.feature }}"
+          echo "SCENARIO=${{ github.event.inputs.scenario }}"
+          echo "BASE_URL=${{ github.event.inputs.baseURL }}"
 
           export BROWSER=${{ github.event.inputs.browser }}
-          export BASE_URL=https://automationteststore.com
-          export PWTRACE=on  # 📦 Enable trace collection
+          export BASE_URL=${{ github.event.inputs.baseURL }}
+          export PWTRACE=on  # Enable trace
 
           mkdir -p cucumber-report
 
-          if [ "${{ github.event.inputs.tag }}" != "" ]; then
-            npx cucumber-js ${{ github.event.inputs.feature }} \
-              --tags "${{ github.event.inputs.tag }}" \
-              --format html:cucumber-report/report.html \
-              --exit
-          else
-            npx cucumber-js ${{ github.event.inputs.feature }} \
-              --format html:cucumber-report/report.html \
-              --exit
+          CMD="npx cucumber-js ${{ github.event.inputs.feature }} \
+            --format html:cucumber-report/report.html --exit"
+
+          if [ ! -z "${{ github.event.inputs.tag }}" ]; then
+            CMD="$CMD --tags '${{ github.event.inputs.tag }}'"
           fi
+
+          if [ ! -z "${{ github.event.inputs.scenario }}" ]; then
+            CMD="$CMD --name '${{ github.event.inputs.scenario }}'"
+          fi
+
+          echo "Running: $CMD"
+          eval $CMD
 
       - name: Upload HTML Report to GitHub Artifacts 💾
         if: always()
