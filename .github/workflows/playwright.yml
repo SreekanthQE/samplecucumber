@@ -41,38 +41,33 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Install Playwright browsers
         run: npx playwright install
 
-      - name: Run Cucumber Tests with Trace 📦
+       - name: Run Cucumber Tests with Trace
         run: |
           echo "BROWSER=${{ github.event.inputs.browser }}"
           echo "TAG=${{ github.event.inputs.tag }}"
           echo "FEATURE=${{ github.event.inputs.feature }}"
-          echo "SCENARIO=${{ github.event.inputs.scenario }}"
-          echo "BASE_URL=${{ github.event.inputs.baseURL }}"
 
           export BROWSER=${{ github.event.inputs.browser }}
-          export BASE_URL=${{ github.event.inputs.baseURL }}
-          export PWTRACE=on
+          export BASE_URL=https://automationteststore.com
+          export PWTRACE=on  # 📦 Enable trace collection
 
           mkdir -p cucumber-report
 
-          CMD="npx cucumber-js ${{ github.event.inputs.feature }} \
-            --format html:cucumber-report/report.html --exit"
-
-          if [ ! -z "${{ github.event.inputs.tag }}" ]; then
-            CMD="$CMD --tags '${{ github.event.inputs.tag }}'"
+          if [ "${{ github.event.inputs.tag }}" != "" ]; then
+            npx cucumber-js ${{ github.event.inputs.feature }} \
+              --tags "${{ github.event.inputs.tag }}" \
+              --format html:cucumber-report/report.html \
+              --exit
+          else
+            npx cucumber-js ${{ github.event.inputs.feature }} \
+              --format html:cucumber-report/report.html \
+              --exit
           fi
-
-          if [ ! -z "${{ github.event.inputs.scenario }}" ]; then
-            CMD="$CMD --name '${{ github.event.inputs.scenario }}'"
-          fi
-
-          echo "Running: $CMD"
-          eval $CMD
 
       - name: Upload HTML Report to GitHub Artifacts 💾
         if: always()
