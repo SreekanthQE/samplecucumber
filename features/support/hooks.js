@@ -26,18 +26,6 @@ Before(async function () {
     
     
   });
-  import { After, AfterAll, Before, BeforeAll, Status } from '@cucumber/cucumber';
-import { AllureRuntime, CucumberJSAllureFormatter } from '@shelex/cucumberjs-allure2-reporter';
-
-export function createAllureRuntime() {
-  return new AllureRuntime({ resultsDir: './allure-results' });
-}
-
-export class CustomAllureFormatter extends CucumberJSAllureFormatter {
-  constructor(options) {
-    super(options, createAllureRuntime());
-  }
-}
 
 
   
