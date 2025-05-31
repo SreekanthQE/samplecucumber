@@ -2,10 +2,15 @@ const {After, Before,AfterStep,Status} = require('@cucumber/cucumber');
 const playwright = require('@playwright/test');
 Before(async function () {
     // This hook will be executed before all scenarios
-    console.log("i am first");
-    const browser = await playwright.chromium.launch({
-      headless: true,
-  });
+const isCI = process.env.CI === 'true';
+const headless = isCI ? true : false;
+
+console.log(`Running in CI: ${isCI}`);
+console.log(`Launching browser with headless: ${headless}`);
+
+const browser = await playwright.chromium.launch({
+  headless: headless,
+});
   const context = await browser.newContext();
     this.page =  await context.newPage();
   });
