@@ -16,10 +16,10 @@ defineParameterType({
   transformer: (cmd) => cmd,
 })
 
-Given('the user navigates to the application URL', async function(){
+Given('the user navigates to the application URL', async function() {
   const homePage = new HomePage(this.page);
-    await expect(await homePage.navigateToURL()).toHaveURL('https://automationteststore.com/')
-
+  await homePage.navigateToURL();
+  await expect(this.page).toHaveURL(process.env.BASE_URL + '/');
 });
 
 When('the user enters valid credentials', async function(){
