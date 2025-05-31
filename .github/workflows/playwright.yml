@@ -30,7 +30,6 @@ on:
 jobs:
   run-cucumber-playwright:
     runs-on: ubuntu-latest
-    retries: 2  # 🔁 Retry job on failure
 
     steps:
       - name: Checkout code
@@ -57,7 +56,7 @@ jobs:
 
           export BROWSER=${{ github.event.inputs.browser }}
           export BASE_URL=${{ github.event.inputs.baseURL }}
-          export PWTRACE=on  # Enable trace
+          export PWTRACE=on
 
           mkdir -p cucumber-report
 
