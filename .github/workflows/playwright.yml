@@ -1,0 +1,55 @@
+name: Cucumber Playwright Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Choose the browser'
+        required: true
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+      tag:
+        description: 'Tag to run (e.g. @smoke)'
+        required: false
+      feature:
+        description: 'Feature file path (e.g. features/login.feature)'
+        required: false
+        default: 'features'
+
+jobs:
+  run-cucumber-playwright:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      - name: Run Cucumber tests
+        run: |
+          echo "BROWSER: ${{ github.event.inputs.browser }}"
+          echo "TAG: ${{ github.event.inputs.tag }}"
+          echo "FEATURE: ${{ github.event.inputs.feature }}"
+
+          export BROWSER=${{ github.event.inputs.browser }}
+          export BASE_URL=https://automationteststore.com
+
+          if [ "${{ github.event.inputs.tag }}" != "" ]; then
+            npx cucumber-js ${{ github.event.inputs.feature }} --tags "${{ github.event.inputs.tag }}" --exit
+          else
+            npx cucumber-js ${{ github.event.inputs.feature }} --exit
+          fi
