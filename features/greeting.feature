@@ -17,7 +17,7 @@ Feature: Greeting
 
 
 
-		Scenario Outline: Say bye
+		Scenario Outline: Say bye one
 		Given a login to Ecommerce2 application with "<username>" and "<password>"
 		Then Verify Error message is displayed
 
