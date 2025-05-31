@@ -1,5 +1,7 @@
 const {After, Before,AfterStep,Status} = require('@cucumber/cucumber');
 const playwright = require('@playwright/test');
+require('dotenv').config();
+
 Before(async function () {
     // This hook will be executed before all scenarios
 const isCI = process.env.CI === 'true';
@@ -12,7 +14,8 @@ const browser = await playwright.chromium.launch({
   headless: headless,
 });
   const context = await browser.newContext();
-    this.page =  await context.newPage();
+    const page = await context.newPage();
+  this.page = page;
   });
 
   AfterStep( async function ({result}) {
@@ -26,7 +29,6 @@ const browser = await playwright.chromium.launch({
     }
   });
   After(async function () {
-    // Assuming this.driver is a selenium webdriver
     console.log("i am last");
     
     
