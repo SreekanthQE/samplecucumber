@@ -4,10 +4,10 @@ const { defineParameterType, When, Given,Then } = require("@cucumber/cucumber")
 const path = require("path")
 let poManager 
 const { expect } = require('@playwright/test');
- const {POManager} = require('../../pages/POManager');
+ const {POManager} = require('../pages/POManager');
 const assert = require("assert");
-const { HomePage } = require("../../pages/HomePage");
-const { LoginPage } = require("../../pages/LoginPage");
+const { HomePage } = require("../pages/HomePage");
+const { LoginPage } = require("../pages/LoginPage");
 const binDir = path.resolve(__dirname, "../../bin")
 console.log(binDir)
 
