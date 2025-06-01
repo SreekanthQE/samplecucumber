@@ -17,15 +17,10 @@ Before({ timeout: 15000 }, async function () {
   this.page = page;
 });
 
-AfterStep(async function ({ result }) {
-  // This hook will be executed after all steps, and take a screenshot on step failure
-  if (result.status === Status.FAILED) {
-    const buffer = await this.page.screenshot();
-    await this.page.screenshot({ path: 'screenshot1.png' });
-    this.attach(buffer.toString('base64'), 'base64:image/png');
-    console.log("Screenshot logged")
-
-  }
+ AfterStep(async function () {
+  if (!this.page) return;
+  const screenshot = await this.page.screenshot();
+  this.attach(screenshot, 'image/png');
 });
 After(async function () {
   console.log("i am last");
