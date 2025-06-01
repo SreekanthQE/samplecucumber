@@ -73,9 +73,6 @@ jobs:
       - name: List allure-results contents
         run: ls -l allure-results || echo "allure-results folder does not exist"
 
-      - name: Install Allure results plugin
-        run: npm install -D @shelex/allure-cucumberjs
-
       - name: Generate Allure report
         run: |
           npm install -g allure-commandline --no-save
