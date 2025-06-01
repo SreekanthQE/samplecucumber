@@ -1,5 +1,4 @@
 const { exec } = require("child_process")
-
 const { defineParameterType, When, Given, Then } = require("@cucumber/cucumber")
 const path = require("path")
 let poManager
@@ -9,6 +8,7 @@ const assert = require("assert");
 const { HomePage } = require("../pages/HomePage");
 const { LoginPage } = require("../pages/LoginPage");
 const binDir = path.resolve(__dirname, "../../bin");
+const allure = require('allure-cucumberjs').default; 
 
 
 defineParameterType({
@@ -18,6 +18,7 @@ defineParameterType({
 })
 
 Given('the user navigates to the application URL', { timeout: 60 * 1000 }, async function () {
+  
   const homePage = new HomePage(this.page);
   await homePage.navigateToURL();
   await expect(this.page).toHaveURL(process.env.BASE_URL + '/');
