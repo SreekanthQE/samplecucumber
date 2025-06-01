@@ -59,13 +59,24 @@ jobs:
 
           CMD="npx cucumber-js ${{ github.event.inputs.feature }} --exit"
 
-          if [ "${{ github.event.inputs.tag }}" != "" ]; then
-            CMD="$CMD --tags \"${{ github.event.inputs.tag }}\""
+          if [ ! -z "${{ github.event.inputs.tag }}" ]; then
+            CMD="$CMD --tags '${{ github.event.inputs.tag }}'"
           fi
 
-          if [ "${{ github.event.inputs.scenario }}" != "" ]; then
-            CMD="$CMD --name \"${{ github.event.inputs.scenario }}\""
+          if [ ! -z "${{ github.event.inputs.scenario }}" ]; then
+            CMD="$CMD --name '${{ github.event.inputs.scenario }}'"
           fi
 
           echo "Running: $CMD"
           eval $CMD
+
+      - name: Generate Allure report
+        run: |
+          npm install -g allure-commandline --no-save
+          allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure report artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report
