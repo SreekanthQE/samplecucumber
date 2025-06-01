@@ -8,10 +8,10 @@ class LoginPage{
         this.page = page;
     }
     async enterUserName(){
-        await this.page.locator(LoginPageLocators.LoginPageUserName).fill(process.env.USERNAME);
+        await this.page.locator(LoginPageLocators.LoginPageUserName).fill(process.env.APP_USERNAME);
     }
      async enterPassWord(){
-        await this.page.locator(LoginPageLocators.LoginPagePassWord).fill(process.env.PASSWORD);
+        await this.page.locator(LoginPageLocators.LoginPagePassWord).fill(process.env.APP_PASSWORD);
     }
      async clickLoginBtn(){
         await this.page.locator(LoginPageLocators.LoginPageLoginBtn).filter({hasText: 'Login'}).click();
