@@ -2,7 +2,7 @@ const {After, Before,AfterStep,Status} = require('@cucumber/cucumber');
 const playwright = require('@playwright/test');
 require('dotenv').config();
 
-Before(async function () {
+Before({ timeout: 15000 }, async function () {
     // This hook will be executed before all scenarios
 const isCI = process.env.CI === 'true';
 const headless = isCI ? true : false;
