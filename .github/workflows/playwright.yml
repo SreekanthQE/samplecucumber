@@ -65,10 +65,14 @@ jobs:
 
           if [ ! -z "${{ github.event.inputs.scenario }}" ]; then
             CMD="$CMD --name '${{ github.event.inputs.scenario }}'"
-          fi
-
-          echo "Running: $CMD"
+              echo "Running: $CMD"
           eval $CMD
+
+      - name: List allure-results contents
+        run: ls -l allure-results || echo "allure-results folder does not exist"
+
+      - name: Install Allure results plugin
+        run: npm install -D @shelex/allure-cucumberjs
 
       - name: Generate Allure report
         run: |
