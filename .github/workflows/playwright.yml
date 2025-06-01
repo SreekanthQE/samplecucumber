@@ -46,27 +46,29 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install
 
-      - name: Run Cucumber tests
-        run: |
-          echo "BROWSER: ${{ github.event.inputs.browser }}"
-          echo "TAG: ${{ github.event.inputs.tag }}"
-          echo "FEATURE: ${{ github.event.inputs.feature }}"
-          echo "SCENARIO: ${{ github.event.inputs.scenario }}"
-          echo "BASE_URL: ${{ github.event.inputs.baseURL }}"
+  - name: Run Cucumber tests
+    run: |
+      echo "BROWSER: ${{ github.event.inputs.browser }}"
+      echo "TAG: ${{ github.event.inputs.tag }}"
+      echo "FEATURE: ${{ github.event.inputs.feature }}"
+      echo "SCENARIO: ${{ github.event.inputs.scenario }}"
+      echo "BASE_URL: ${{ github.event.inputs.baseURL }}"
 
-          export BROWSER=${{ github.event.inputs.browser }}
-          export BASE_URL=${{ github.event.inputs.baseURL }}
+      export BROWSER=${{ github.event.inputs.browser }}
+      export BASE_URL=${{ github.event.inputs.baseURL }}
 
-          CMD="npx cucumber-js ${{ github.event.inputs.feature }} --exit"
+      CMD="npx cucumber-js ${{ github.event.inputs.feature }} --exit"
 
-          if [ ! -z "${{ github.event.inputs.tag }}" ]; then
-            CMD="$CMD --tags '${{ github.event.inputs.tag }}'"
-          fi
+      if [ ! -z "${{ github.event.inputs.tag }}" ]; then
+        CMD="$CMD --tags '${{ github.event.inputs.tag }}'"
+      fi
 
-          if [ ! -z "${{ github.event.inputs.scenario }}" ]; then
-            CMD="$CMD --name '${{ github.event.inputs.scenario }}'"
-              echo "Running: $CMD"
-          eval $CMD
+      if [ ! -z "${{ github.event.inputs.scenario }}" ]; then
+        CMD="$CMD --name '${{ github.event.inputs.scenario }}'"
+      fi
+
+      echo "Running: $CMD"
+      eval $CMD
 
       - name: List allure-results contents
         run: ls -l allure-results || echo "allure-results folder does not exist"
