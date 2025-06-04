@@ -1,0 +1,45 @@
+{
+  "cookies": [
+    {
+      "name": "AC_SF_8CEFDA09D5",
+      "value": "44cc62752466543b772653bb76b29454",
+      "domain": "automationteststore.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "language",
+      "value": "en",
+      "domain": "automationteststore.com",
+      "path": "/",
+      "expires": 1751605741.735813,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "currency",
+      "value": "USD",
+      "domain": "automationteststore.com",
+      "path": "/",
+      "expires": 1751605741.735848,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "customer",
+      "value": "V2dzL2RETWhkaE9aQ1plcDhKblVTTFhQQTJETjU5S0puNVdNK0Nkd0RhUFVHYUQzMzlmL2FCSHc3OTFyYloxalN4NVkrc3pFTmg3NWZuVjRZR1JXVXRqS1ZWeU5hbzh0Q0JqdkhiTHBjelVZcnFCTVl6T21CQ01jVHhKajk0NDhhQjdZVnl4ZjQ4bmQ1TzJSL0RXRkdBPT06OhLjZrs9coaGMeY_PJNyz6o%3D",
+      "domain": "automationteststore.com",
+      "path": "/",
+      "expires": 1780549744.974217,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

@@ -12,6 +12,7 @@ Before({ timeout: 15000 }, async function () {
   const browser = await playwright.chromium.launch({
     headless: headless,
   });
+  // const context = await browser.newContext({storageState: 'storageLogin.json'});
   const context = await browser.newContext();
   const page = await context.newPage();
   this.page = page;
@@ -25,8 +26,6 @@ Before({ timeout: 15000 }, async function () {
 
 After(async function () {
   console.log("i am last");
-
-
 });
 
 

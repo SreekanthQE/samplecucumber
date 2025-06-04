@@ -25,8 +25,6 @@ Given('the user navigates to the application URL', { timeout: 60 * 1000 }, async
 });
 
 When('the user enters valid credentials', async function () {
-  const homePage = new HomePage(this.page);
-  await homePage.clickLoginOrRegister();
   const loginPage = new LoginPage(this.page);
   await loginPage.login();
 })
