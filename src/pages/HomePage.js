@@ -1,18 +1,14 @@
+import * as playwrightUtils from '../utils/playwrightUtils.js';
+import { LoginPageLocators } from '../pageobjects/loginPageLocators.js';
 
 
-class HomePage{
-    constructor(page){
-        this.page = page;
+export class HomePage {
+
+    static async navigateTo() {
+        await playwrightUtils.navigateTo(process.env.BASE_URL);
     }
-   async navigateToURL() {
-        await this.page.goto(process.env.BASE_URL);
-        await this.page.waitForLoadState('networkidle');
+    static async clickOnLoginRegisterButton() {
+        await playwrightUtils.clickByText(LoginPageLocators.LoginPageLoginRegister);
+        await playwrightUtils.waitForPageLoad();
     }
-    async verifyUserLandsOnHomePage(){
-
-
-    }
-
 }
-
-module.exports = { HomePage }

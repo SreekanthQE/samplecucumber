@@ -1,7 +1,8 @@
 const LoginPageLocators = {
+  LoginPageLoginRegister: "Login or register",
   LoginPageUserName: "#loginFrm_loginname",
   LoginPagePassWord: "#loginFrm_password",
-  LoginPageLoginBtn: "button[type='submit']"
+  LoginPageLoginBtn: "button[title='Login']"
 };
 
 module.exports = { LoginPageLocators };
