@@ -11,7 +11,7 @@ const config = {
     // resolve('./src/support/pageFixture.js'),
   ],
   format: [
-    'html:cucumber-reports/report.html',
+    'html:reports/report.html',
     'summary',
     'allure-cucumberjs/reporter' 
   ],
