@@ -1,6 +1,11 @@
 import fs from 'fs';
 import { pageFixture } from '../support/pageFixture.js';
+import { expect } from '@playwright/test';
 
+/**
+ * Utility class for common Playwright actions and assertions
+ * This class provides methods for navigation, element interaction, assertions, and more.
+ */
 export class playwrightUtils {
   static async navigateTo(url) {
     if (!url) throw new Error("URL is required for navigation");
@@ -79,6 +84,7 @@ export class playwrightUtils {
   static async clickBySelector(selector, options = {}) {
     try {
       const clickOptions = { timeout: 5000, ...options };
+      await pageFixture.getPage().locator(selector).isVisible();
       await pageFixture.getPage().click(selector, clickOptions);
       console.log(`Clicked on element ${selector}`);
     } catch (error) {
@@ -155,8 +161,6 @@ export class playwrightUtils {
   }
 
   static async fillInput(selector, value) {
-    const page = pageFixture.getPage();
-
     if (!selector || !value) {
       const msg = '❌ Both selector and value are required to fill input';
       console.error(msg);
@@ -164,16 +168,15 @@ export class playwrightUtils {
     }
 
     try {
-      await page.waitForSelector(selector, { timeout: 5000 });
-
-      const element = await page.$(selector);
+      await pageFixture.getPage().waitForSelector(selector, { timeout: 5000 });
+      const element = await pageFixture.getPage().$(selector);
       if (!element) {
         const msg = `❌ Element not found: ${selector}`;
         console.error(msg);
         throw new Error(msg);
       }
-
-      await page.fill(selector, value);
+      await element.focus(); 
+      await pageFixture.getPage().fill(selector, value);
       console.log(`✅ Filled input ${selector} with value: ${value}`);
     } catch (error) {
       console.error(`❌ Failed to fill input ${selector}: ${error.message}`);
@@ -181,11 +184,11 @@ export class playwrightUtils {
       // Attach to Allure if available
       if (this?.attach) {
         this.attach(`Error filling input: ${selector}`, 'text/plain');
-        const screenshot = await page.screenshot();
+        const screenshot = await pageFixture.getPage().screenshot();
         this.attach(screenshot, 'image/png');
       }
 
-      throw error; 
+      throw error;
     }
   }
 
@@ -334,7 +337,7 @@ export class playwrightUtils {
     console.log(`Set input files for ${selector}`);
   }
   static async waitForDownload(callback) {
-    const [ download ] = await Promise.all([
+    const [download] = await Promise.all([
       pageFixture.getPage().waitForEvent('download'),
       callback()
     ]);
@@ -633,5 +636,15 @@ export class playwrightUtils {
       console.error(`Element ${selector} not visible within ${timeout}ms:`, error);
       throw error;
     }
+  }
+  static async verifyURL(expectedUrlPattern) {
+  const currentUrl = pageFixture.getPage().url();
+  const regex = new RegExp(expectedUrlPattern);
+  if (regex.test(currentUrl)) {
+    console.log(`Verified URL: ${currentUrl} matches pattern: ${expectedUrlPattern}`);
+  } else {
+    console.error(`Current URL: ${currentUrl} does not match pattern: ${expectedUrlPattern}`);
+    throw new Error("Current URL does not match expected pattern");
+  }
   }
 }

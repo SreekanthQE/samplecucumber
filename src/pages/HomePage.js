@@ -14,4 +14,12 @@ export class HomePage {
         await playwrightUtils.waitForPageLoad(20000);
         console.log("User clicked on Login/Register button and waited for page load");
     }
+    static async verifyURL(){
+        await playwrightUtils.verifyURL('account/account')
+    }
+    static async verifyProfileNameIsDisplayed() {
+        await playwrightUtils.waitForElementVisible(LoginPageLocators.LoginPageProfileName, 10000);
+        await playwrightUtils.assertElementText(LoginPageLocators.LoginPageProfileName, "Welcome back " + process.env.APP_USERNAME);
+    }
+
 }

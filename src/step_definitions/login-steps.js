@@ -23,7 +23,6 @@ When('the user enters valid credentials',{timeout: 15000}, async function () {
 })
 
 Then('verify the user lands on the application home page',{timeout: 15000}, async function () {
-  const page = pageFixture.getPage();
-  await expect(page).toHaveURL(/.*account\/account/);
-  await expect(page.locator("div[class='menu_text']")).toHaveText("Welcome back " + process.env.APP_USERNAME);
+  await HomePage.verifyURL();
+  await HomePage.verifyProfileNameIsDisplayed();
 });

@@ -1,6 +1,6 @@
 Feature: Login Functionality
 
-    @successfulLogin
+    @sample
     Scenario: Validate user is able to log in to the application successfully
         Given the user navigates to the application URL
         When the user enters valid credentials
