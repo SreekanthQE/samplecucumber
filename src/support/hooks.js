@@ -1,4 +1,4 @@
-import { After, Before, AfterStep, Status } from '@cucumber/cucumber';
+import { After, Before, AfterStep } from '@cucumber/cucumber';
 import * as playwright from 'playwright';
 import { pageFixture } from './pageFixture.js';
 
@@ -23,13 +23,11 @@ Before({ timeout: 15000 }, async function () {
 });
 
 AfterStep(async function () {
-  if (!pageFixture.page) return;
+  const page = pageFixture.getPage();
+  if (!page) return;
   try {
-    const screenshot = await pageFixture.page.screenshot();
-    this.attach(screenshot, 'image/png');
-    if (this.allure && typeof this.allure.addAttachment === 'function') {
-      this.allure.addAttachment('Screenshot', screenshot, 'image/png');
-    }
+    const screenshot = await page.screenshot();
+    await this.attach(screenshot, 'image/png');
   } catch (err) {
     console.error('Error capturing screenshot in AfterStep:', err);
   }
@@ -37,18 +35,21 @@ AfterStep(async function () {
 
 After(async function () {
   try {
-    if (pageFixture.page) {
-      const context = pageFixture.page.context();
+    const page = pageFixture.getPage();
+    if (page) {
+      const context = page.context();
       const browser = context.browser();
-      await pageFixture.page.close();
+      await page.close();
       await context.close();
       await browser.close();
-      pageFixture.page = null;
+      pageFixture.setPage(null);
+      pageFixture.setContext(null);
+      pageFixture.setBrowser(null);
     }
   } catch (err) {
     console.error('Error during browser/page cleanup in After hook:', err);
   }
-  console.log("Test scenario cleanup complete. Browser, context, and page closed.");
+  console.log('Test scenario cleanup complete. Browser, context, and page closed.');
 });
 
 
