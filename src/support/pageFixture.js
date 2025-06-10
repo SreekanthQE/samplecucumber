@@ -1,7 +1,27 @@
-const pageFixture = {
-    browser: null,
-    context: null,
-    page: null,
+// src/support/pageFixture.js
+
+export class PageFixture {
+  constructor() {
+    this.browser = null;
+    this.context = null;
+    this.page = null;
+  }
+
+  setPage(page) {
+    this.page = page;
+  }
+
+  getPage() {
+    return this.page;
+  }
+
+  setContext(context) {
+    this.context = context;
+  }
+
+  setBrowser(browser) {
+    this.browser = browser;
+  }
 }
-module.exports = pageFixture;
-// This fixture is used to store the browser, context, and page objects
+
+export const pageFixture = new PageFixture();

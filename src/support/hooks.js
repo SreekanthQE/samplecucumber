@@ -1,6 +1,6 @@
-const { After, Before, AfterStep, Status } = require('@cucumber/cucumber');
-const playwright = require('@playwright/test');
-const pageFixture = require('./pageFixture');
+import { After, Before, AfterStep, Status } from '@cucumber/cucumber';
+import * as playwright from 'playwright';
+import { pageFixture } from './pageFixture.js';
 
 Before({ timeout: 15000 }, async function () {
   // This hook will be executed before all scenarios
@@ -13,10 +13,13 @@ Before({ timeout: 15000 }, async function () {
   const browser = await playwright.chromium.launch({
     headless: headless,
   });
-  // const context = await browser.newContext({storageState: 'storageLogin.json'});
   const context = await browser.newContext();
   const page = await context.newPage();
-  pageFixture.page = page;
+
+  // Set on singleton instance
+  pageFixture.setBrowser(browser);
+  pageFixture.setContext(context);
+  pageFixture.setPage(page);
 });
 
 AfterStep(async function () {

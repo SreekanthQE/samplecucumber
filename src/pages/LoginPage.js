@@ -1,33 +1,25 @@
-const { LoginPageLocators } = require('../pageobjects/loginPageLocators');
-require('dotenv').config();
-const playwrightUtils = require('../utils/playwrightUtils');
-const pageFixture = require('../support/pageFixture');
+import { LoginPageLocators } from '../pageobjects/loginPageLocators.js';
+import 'dotenv/config';
+import * as playwrightUtils from '../utils/playwrightUtils.js';
 
-
-
-class LoginPage{
-   static async enterUserName(){
+export class LoginPage {
+    static async enterUserName() {
         await playwrightUtils.fillInput(LoginPageLocators.LoginPageUserName, process.env.APP_USERNAME);
-        // Take screenshot and attach to Allure if available
-        const screenshot = await pageFixture.page.screenshot();
-        if (global.allure) {
-            global.allure.attachment('Username Entered', screenshot, 'image/png');
-        } else if (typeof this.attach === 'function') {
-            await this.attach(screenshot, 'image/png');
-        }
+        console.log("User name entered: ");
     }
-   static  async enterPassWord(){
+    static async enterPassWord() {
         await playwrightUtils.fillInput(LoginPageLocators.LoginPagePassWord, process.env.APP_PASSWORD);
+        console.log("Password entered: ");
     }
-  static   async clickLoginBtn(){
+    static async clickLoginBtn() {
         await playwrightUtils.clickByLocator(LoginPageLocators.LoginPageLoginBtn);
         await playwrightUtils.waitForPageLoad();
+        console.log("User clicked on Login Button")
     }
-  static  async login(){
+    static async login() {
         await this.enterUserName();
         await this.enterPassWord();
         await this.clickLoginBtn();
     }
 
 }
-module.exports = { LoginPage }
