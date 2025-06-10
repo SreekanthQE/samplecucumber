@@ -1,6 +1,6 @@
 import { LoginPageLocators } from '../pageobjects/loginPageLocators.js';
 import 'dotenv/config';
-import * as playwrightUtils from '../utils/playwrightUtils.js';
+import { playwrightUtils } from '../utils/playwrightUtils.js';
 
 export class LoginPage {
     static async enterUserName() {

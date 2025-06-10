@@ -83,3 +83,9 @@ jobs:
         with:
           name: allure-report
           path: ./allure-report
+
+      - name: Upload HTML Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: ./reports

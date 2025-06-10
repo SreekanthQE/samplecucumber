@@ -30,6 +30,7 @@ AfterStep(async function () {
     await this.attach(screenshot, 'image/png');
   } catch (err) {
     console.error('Error capturing screenshot in AfterStep:', err);
+    throw err; // Always re-throw so Allure and Cucumber see the error
   }
 });
 
@@ -48,6 +49,7 @@ After(async function () {
     }
   } catch (err) {
     console.error('Error during browser/page cleanup in After hook:', err);
+    throw err; // Always re-throw so Allure and Cucumber see the error
   }
   console.log('Test scenario cleanup complete. Browser, context, and page closed.');
 });
