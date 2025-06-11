@@ -9,17 +9,22 @@ import { expect } from '@playwright/test';
  */
 export class playwrightUtils {
   static async navigateTo(url, options = {}) {
-    if (!url) throw new Error("URL is required for navigation");
-    try {
-      if (!pageFixture.getPage()) throw new Error("pageFixture.page is not initialized");
-      // Use default waitUntil unless overridden
-      const waitUntil = options.waitUntil || 'load';
-      await pageFixture.getPage().goto(url, { waitUntil });
-      Logger.log(`Navigated to ${url} (waitUntil: ${waitUntil})`);
-    } catch (error) {
-      Logger.error(`Failed to navigate to ${url}: ${error}`);
-      throw error;
-    }
+  if (!url) throw new Error("URL is required for navigation");
+
+  try {
+    const page = pageFixture.getPage();
+    if (!page) throw new Error("pageFixture.page is not initialized");
+
+    // Determine waitUntil strategy
+    const waitUntil = options.useNetworkIdle ? 'networkidle' : (options.waitUntil || 'load');
+
+    await page.goto(url, { waitUntil });
+
+    Logger.log(`Navigated to ${url} (waitUntil: ${waitUntil})`);
+  } catch (error) {
+    Logger.error(`Failed to navigate to ${url}: ${error}`);
+    throw error;
+  }
   }
 
   static async goBack() {
