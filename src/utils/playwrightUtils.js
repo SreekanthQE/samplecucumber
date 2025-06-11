@@ -12,7 +12,7 @@ export class playwrightUtils {
   if (!url) throw new Error("URL is required for navigation");
 
   try {
-0    const page = pageFixture.getPage();
+    const page = pageFixture.getPage();
     if (!page) throw new Error("pageFixture.page is not initialized");
 
     await page.goto(url, { waitForLoadState: 'networkidle' });
