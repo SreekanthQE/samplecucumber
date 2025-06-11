@@ -8,17 +8,13 @@ import { expect } from '@playwright/test';
  * This class provides methods for navigation, element interaction, assertions, and more.
  */
 export class playwrightUtils {
-  static async navigateTo(url, options = {}) {
+  static async navigateTo(url) {
   if (!url) throw new Error("URL is required for navigation");
 
   try {
-    const page = pageFixture.getPage();
     if (!page) throw new Error("pageFixture.page is not initialized");
 
-    // Determine waitUntil strategy
-    const waitUntil = options.useNetworkIdle ? 'networkidle' : (options.waitUntil || 'load');
-
-    await page.goto(url, { waitUntil });
+    await pageFixture.getPage().goto(url, { waitForLoadState: 'networkidle' });
 
     Logger.log(`Navigated to ${url} (waitUntil: ${waitUntil})`);
   } catch (error) {
