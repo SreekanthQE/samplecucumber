@@ -1,3 +1,13 @@
+// Global error and unhandled rejection handlers for CI diagnostics
+process.on('unhandledRejection', (reason) => {
+  console.error('UNHANDLED REJECTION:', reason);
+  process.exitCode = 1;
+});
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+  process.exitCode = 1;
+});
+
 // cucumber.js
 import { resolve } from 'path';
 
