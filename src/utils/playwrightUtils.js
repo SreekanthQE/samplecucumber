@@ -918,4 +918,21 @@ export class playwrightUtils {
     }
     throw new Error(`No element with text containing '${expectedText}' found for selector: ${selector}`);
   }
-}
+ 
+ static async assertElementInAllElements(selector, expectedText) {
+    const locators = await pageFixture.getPage().locator(selector).allTextContents();
+    if (locators.length === 0) {
+      throw new Error("No elements found for selector: " + selector);
+    }
+    for (let ele of locators) {
+      const trimmed = (ele || '').trim();
+      if (trimmed === expectedText.trim()) {
+        expect(trimmed).toBe(expectedText.trim());
+        Logger.log(`[ASSERT] Element with text '${expectedText}' found for selector: ${selector}`);
+        return;
+      }
+    }
+    Logger.error(`[ASSERT] No element with exact text '${expectedText}' found. Actual texts: ${JSON.stringify(locators)}`);
+    throw new Error(`No element with exact text '${expectedText}' found for selector: ${selector}`);
+  }
+ }

@@ -6,7 +6,7 @@ import { FakerUtils } from '../utils/fakerUtils.js';
 
 export class LoginPage {
     async userClicksOnLogoutButton(){
-       await pw.clickBySelector(LoginPageLocators.LoginPageLogOutBtn);
+       await pw.clickSingleElementInAllElements(LoginPageLocators.HomePageAllMenus, 'Logout');
         await pw.waitForPageLoad('networkidle');
     }
     async enterName(){
@@ -114,7 +114,7 @@ export class LoginPage {
     }
     async userShouldBeRedirectedToLoginPage(){
         await pw.verifyURL('/login');
-        await pw.assertElementVisible(LoginPageLocators.HomePageSignUporLoginButton);
+        await pw.assertElementInAllElements(LoginPageLocators.HomePageAllMenus, 'Signup / Login');
     }
     
 }
