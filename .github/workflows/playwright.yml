@@ -52,6 +52,11 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install
 
+      - name: Extract Cucumber tags
+        run: |
+          node scripts/extract-cucumber-tags.cjs
+          echo "Available tags: $(cat cucumber-tags.json)"
+
       - name: Run scenarios
         run: |
           echo "BROWSER: ${{ github.event.inputs.browser }}"
