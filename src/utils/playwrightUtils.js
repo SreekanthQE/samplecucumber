@@ -905,28 +905,20 @@ export class playwrightUtils {
       throw error;
     }
   }
-
-  // Utility to close cookie banner if present
-  static async closeCookieBannerIfPresent() {
-    const page = pageFixture.getPage();
-    // Try common selectors for cookie banners
-    const selectors = [
-      '#cookie-accept',
-      '.cookie-accept',
-      'button[aria-label*="cookie"]',
-      'button:has-text("Accept")',
-      'button:has-text("Got it")',
-      '.cc-btn',
-    ];
-    for (const sel of selectors) {
-      try {
-        const el = page.locator(sel);
-        if (await el.count() > 0 && await el.isVisible()) {
-          await el.click({ timeout: 2000 });
-          Logger.log(`[COOKIE] Closed cookie banner with selector: ${sel}`);
-          break;
-        }
-      } catch {}
+  
+  static async clickSingleElementInAllElements(selector, expectedText){
+    const locators = await pageFixture.getPage().locator(selector).all();
+    if (locators.length === 0) {
+      throw new Error("No elements found for selector: " + selector);
     }
+    for (let ele of locators) {
+      const locatorText = (await ele.textContent() || '').trim();
+      if (locatorText.includes(expectedText)) {
+        await ele.click();
+        Logger.log(`Clicked element with text containing: ${expectedText}`);
+        return;
+      }
+    }
+    throw new Error(`No element with text containing '${expectedText}' found for selector: ${selector}`);
   }
 }
