@@ -1,4 +1,3 @@
-import { Logger } from './logger.js';
 import fs from 'fs';
 import { pageFixture } from '../support/pageFixture.js';
 import { expect } from '@playwright/test';
@@ -9,338 +8,224 @@ import { expect } from '@playwright/test';
  */
 export class playwrightUtils {
   static async navigateTo(url) {
-  if (!url) throw new Error("URL is required for navigation");
-
-  try {
-    const page = pageFixture.getPage();
-    if (!page) throw new Error("pageFixture.page is not initialized");
-
-    await page.goto(url, { waitForLoadState: 'networkidle' });
-
-    Logger.log(`Navigated to ${url} (waitForLoadState: networkidle)`);
-  } catch (error) {
-    Logger.error(`Failed to navigate to ${url}: ${error}`);
-    throw error;
-  }
+    if (!url) throw new Error("URL is required for navigation");
+    try {
+      if (!pageFixture.getPage()) throw new Error("pageFixture.page is not initialized");
+      await pageFixture.getPage().goto(url, { timeout: 40000});
+      console.log(`Navigated to ${url}`);
+    } catch (error) {
+      console.error(`Failed to navigate to ${url}:`, error);
+      throw error;
+    }
   }
 
   static async goBack() {
     try {
-      const page = pageFixture.getPage();
-      if (!page) throw new Error('pageFixture.page is not initialized');
-      await page.goBack();
-      Logger.log('Navigated back');
+      await pageFixture.getPage().goBack();
+      console.log('Navigated back');
     } catch (error) {
-      Logger.error('Failed to navigate back: ' + error);
-      const screenshotPath = `error-goBack-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error('Navigation back failed');
+      console.error('Failed to navigate back:', error);
+      throw error;
     }
   }
 
   static async goForward() {
     try {
-      const page = pageFixture.getPage();
-      if (!page) throw new Error('pageFixture.page is not initialized');
-      await page.goForward();
-      Logger.log('Navigated forward');
+      await pageFixture.getPage().goForward();
+      console.log('Navigated forward');
     } catch (error) {
-      Logger.error('Failed to navigate forward: ' + error);
-      const screenshotPath = `error-goForward-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error('Navigation forward failed');
+      console.error('Failed to navigate forward:', error);
+      throw error;
     }
   }
 
   static async reloadPage() {
     try {
-      const page = pageFixture.getPage();
-      if (!page) throw new Error('pageFixture.page is not initialized');
-      await page.reload();
-      Logger.log('Page reloaded');
+      await pageFixture.getPage().reload();
+      console.log('Page reloaded');
     } catch (error) {
-      Logger.error('Failed to reload page: ' + error);
-      const screenshotPath = `error-reloadPage-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error('Reload page failed');
+      console.error('Failed to reload page:', error);
+      throw error;
     }
-  }
-  static async getLocator(selector){
-    Logger.log(`[GET LOCATOR] Getting locator for selector: ${selector}`);    
-    const locator = pageFixture.getPage().locator(selector);
-    Logger.log(`[GET LOCATOR] Locator for selector "${selector}" obtained successfully`);
-    return locator;
   }
 
   static async clickElement(selector, options = {}) {
-    const locator = await this.getLocator(selector);
-    if (!locator) {
-      throw new Error(`Locator for selector "${selector}" not found.`);
-    }
     try {
-      Logger.log(`[CLICK] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      Logger.log(`[CLICK] Attempting to click ${selector}`);
-      await locator.click({ timeout: 5000, ...options });
-      Logger.log(`[SUCCESS] Clicked on ${selector}`);
+      // Set default timeout to 5000ms if not provided
+      const clickOptions = { timeout: 5000, ...options };
+      // Try normal selector first
+      if (await pageFixture.getPage().$(selector)) {
+        await pageFixture.getPage().click(selector, clickOptions);
+        console.log(`Clicked on element ${selector}`);
+        return;
+      }
+      // Try getByText
+      const byText = await pageFixture.getPage().getByText?.(selector);
+      if (byText) {
+        await byText.click(clickOptions);
+        console.log(`Clicked element by text: ${selector}`);
+        return;
+      }
+      // Try getByRole
+      const byRole = await pageFixture.getPage().getByRole?.(selector);
+      if (byRole) {
+        await byRole.click(clickOptions);
+        console.log(`Clicked element by role: ${selector}`);
+        return;
+      }
+      throw new Error(`Element not found by selector, text, or role: ${selector}`);
     } catch (error) {
-      Logger.error(`[ERROR] Failed to click ${selector}: ${error}`);
-      const screenshotPath = `error-click-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Click failed on selector: ${selector}`);
+      console.error(`Failed to click on element ${selector}:`, error);
+      throw error;
     }
   }
 
   // Click by selector
   static async clickBySelector(selector, options = {}) {
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`Locator for selector "${selector}" not found.`);
-    }
     try {
-      Logger.log(`[CLICK] Waiting for ${selector} to be visible...`);
-      console.log(`[CLICK] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      Logger.log(`[CLICK] Attempting to click ${selector}`);
-      console.log(`[CLICK] Attempting to click ${selector}`);
-      await locator.click({ timeout: 5000, ...options });
-      Logger.log(`[SUCCESS] Clicked on ${selector}`);
-      console.log(`[SUCCESS] Clicked on ${selector}`);
+      const clickOptions = { timeout: 5000, ...options };
+      await pageFixture.getPage().locator(selector).isVisible();
+      await pageFixture.getPage().click(selector, clickOptions);
+      console.log(`Clicked on element ${selector}`);
     } catch (error) {
-      Logger.error(`[ERROR] Failed to click ${selector}: ${error}`);
-      console.error(`[ERROR] Failed to click ${selector}:`, error);
-      const screenshotPath = `error-clickBySelector-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Click failed on selector: ${selector}`);
+      console.error(`Failed to click on element ${selector}:`, error);
+      throw error;
     }
   }
 
   // Click by text
-  static async clickByText(text, options = {}) {
-    const locator = pageFixture.getPage().locator(`text=${text}`);
-    if (!locator) {
-      throw new Error(`Locator for text "${text}" not found.`);
-    }
+  static async clickByText(text) {
     try {
-      Logger.log(`[CLICK] Waiting for text=${text} to be visible...`);
-      console.log(`[CLICK] Waiting for text=${text} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      Logger.log(`[CLICK] Attempting to click text=${text}`);
-      console.log(`[CLICK] Attempting to click text=${text}`);
-      await locator.click({ timeout: 5000, ...options });
-      Logger.log(`[SUCCESS] Clicked element by text: ${text}`);
-      console.log(`[SUCCESS] Clicked element by text: ${text}`);
+      const locator = pageFixture.getPage().locator(`text=${text}`);
+      await locator.click();
+      console.log(`Clicked element by text: ${text}`);
     } catch (error) {
-      Logger.error(`[ERROR] Failed to click element by text '${text}': ${error}`);
-      console.error(`[ERROR] Failed to click element by text '${text}':`, error);
-      const screenshotPath = `error-clickByText-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Click failed on text: ${text}`);
+      console.error(`Failed to click element by text '${text}':`, error);
+      throw error;
     }
   }
 
   // Click by role
   static async clickByRole(role, options = {}) {
-    const locator = pageFixture.getPage().getByRole?.(role);
-    if (!locator) {
-      throw new Error(`Locator for role "${role}" not found.`);
-    }
     try {
-      Logger.log(`[CLICK] Waiting for role=${role} to be visible...`);
-      console.log(`[CLICK] Waiting for role=${role} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      Logger.log(`[CLICK] Attempting to click role=${role}`);
-      console.log(`[CLICK] Attempting to click role=${role}`);
-      await locator.click({ timeout: 5000, ...options });
-      Logger.log(`[SUCCESS] Clicked element by role: ${role}`);
-      console.log(`[SUCCESS] Clicked element by role: ${role}`);
+      const clickOptions = { timeout: 5000, ...options };
+      const byRole = await pageFixture.getPage().getByRole?.(role);
+      if (!byRole) throw new Error(`Element with role '${role}' not found`);
+      await byRole.click(clickOptions);
+      console.log(`Clicked element by role: ${role}`);
     } catch (error) {
-      Logger.error(`[ERROR] Failed to click element by role '${role}': ${error}`);
-      console.error(`[ERROR] Failed to click element by role '${role}':`, error);
-      const screenshotPath = `error-clickByRole-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Click failed on role: ${role}`);
+      console.error(`Failed to click element by role '${role}':`, error);
+      throw error;
     }
   }
 
   // Click by locator
-  static async clickLocatorByXpathOrCSS(locatorStr, options = {}) {
-    const locator = pageFixture.getPage().locator(locatorStr);
-    if (!locator) {
-      throw new Error(`Locator for "${locatorStr}" not found.`);
-    }
+  static async clickLocatorByXpathOrCSS(locator, options = {}) {
     try {
-      const timeout = options.timeout || 15000; // Increased default timeout for CI
-      Logger.log(`[CLICK] Waiting for ${locatorStr} to be visible...`);
-      console.log(`[CLICK] Waiting for ${locatorStr} to be visible...`);
-      await expect(locator).toBeVisible({ timeout });
-      Logger.log(`[CLICK] Attempting to click ${locatorStr}`);
-      console.log(`[CLICK] Attempting to click ${locatorStr}`);
-      await locator.click({ timeout, ...options });
-      Logger.log(`[SUCCESS] Clicked element by locator: ${locatorStr}`);
-      console.log(`[SUCCESS] Clicked element by locator: ${locatorStr}`);
+      const clickOptions = { timeout: 5000, ...options };
+      const el = pageFixture.getPage().locator(locator);
+      await el.click(clickOptions);
+      console.log(`Clicked element by locator: ${locator}`);
     } catch (error) {
-      Logger.error(`[ERROR] Failed to click element by locator '${locatorStr}': ${error}`);
-      console.error(`[ERROR] Failed to click element by locator '${locatorStr}':`, error);
-      const screenshotPath = `error-clickLocatorByXpathOrCSS-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Click failed on locator: ${locatorStr}`);
+      console.error(`Failed to click element by locator '${locator}':`, error);
+      throw error;
     }
   }
 
   // Click by test id
   static async clickByTestId(testId, options = {}) {
-    const locator = pageFixture.getPage().getByTestId?.(testId);
-    if (!locator) {
-      throw new Error(`Locator for test id "${testId}" not found.`);
-    }
+    const clickOptions = { timeout: 5000, ...options };
     try {
-      Logger.log(`[CLICK] Waiting for test id=${testId} to be visible...`);
-      console.log(`[CLICK] Waiting for test id=${testId} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      Logger.log(`[CLICK] Attempting to click test id=${testId}`);
-      console.log(`[CLICK] Attempting to click test id=${testId}`);
-      await locator.click({ timeout: 5000, ...options });
-      Logger.log(`[SUCCESS] Clicked element by test id: ${testId}`);
-      console.log(`[SUCCESS] Clicked element by test id: ${testId}`);
+      const el = pageFixture.getPage().getByTestId?.(testId);
+      if (!el) throw new Error(`Element with test id '${testId}' not found`);
+      await el.click(clickOptions);
+      console.log(`Clicked element by test id: ${testId}`);
     } catch (error) {
-      Logger.error(`[ERROR] Failed to click element by test id '${testId}': ${error}`);
-      console.error(`[ERROR] Failed to click element by test id '${testId}':`, error);
-      const screenshotPath = `error-clickByTestId-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Click failed on test id: ${testId}`);
+      console.error(`Failed to click element by test id '${testId}':`, error);
+      throw error;
     }
   }
 
   // Click by label
   static async clickByLabel(label, options = {}) {
-    const locator = pageFixture.getPage().getByLabel?.(label);
-    if (!locator) {
-      throw new Error(`Locator for label "${label}" not found.`);
-    }
+    const clickOptions = { timeout: 5000, ...options };
     try {
-      Logger.log(`[CLICK] Waiting for label=${label} to be visible...`);
-      console.log(`[CLICK] Waiting for label=${label} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      Logger.log(`[CLICK] Attempting to click label=${label}`);
-      console.log(`[CLICK] Attempting to click label=${label}`);
-      await locator.click({ timeout: 5000, ...options });
-      Logger.log(`[SUCCESS] Clicked element by label: ${label}`);
-      console.log(`[SUCCESS] Clicked element by label: ${label}`);
+      const el = pageFixture.getPage().getByLabel?.(label);
+      if (!el) throw new Error(`Element with label '${label}' not found`);
+      await el.click(clickOptions);
+      console.log(`Clicked element by label: ${label}`);
     } catch (error) {
-      Logger.error(`[ERROR] Failed to click element by label '${label}': ${error}`);
-      console.error(`[ERROR] Failed to click element by label '${label}':`, error);
-      const screenshotPath = `error-clickByLabel-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Click failed on label: ${label}`);
+      console.error(`Failed to click element by label '${label}':`, error);
+      throw error;
     }
   }
 
   static async fillInput(selector, value) {
     if (!selector || !value) {
-      const msg = '[FILL] ❌ Both selector and value are required to fill input';
+      const msg = '❌ Both selector and value are required to fill input';
       console.error(msg);
       throw new Error(msg);
     }
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[FILL] Locator for selector "${selector}" not found.`);
-    }
+
     try {
-      console.log(`[FILL] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      await locator.focus();
-      console.log(`[FILL] Filling ${selector} with value: ${value}`);
-      await locator.fill(value);
-      console.log(`[SUCCESS] Filled input ${selector} with value: ${value}`);
+      await pageFixture.getPage().waitForSelector(selector, { timeout: 5000 });
+      const element = await pageFixture.getPage().$(selector);
+      if (!element) {
+        const msg = `❌ Element not found: ${selector}`;
+        console.error(msg);
+        throw new Error(msg);
+      }
+      await element.focus(); 
+      await pageFixture.getPage().fill(selector, value);
+      console.log(`✅ Filled input ${selector} with value: ${value}`);
     } catch (error) {
-      console.error(`[ERROR] Failed to fill input ${selector}:`, error);
-      const screenshotPath = `error-fillInput-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Fill input failed on selector: ${selector}`);
+      console.error(`❌ Failed to fill input ${selector}: ${error.message}`);
+
+      // Attach to Allure if available
+      if (this?.attach) {
+        this.attach(`Error filling input: ${selector}`, 'text/plain');
+        const screenshot = await pageFixture.getPage().screenshot();
+        this.attach(screenshot, 'image/png');
+      }
+
+      throw error;
     }
   }
 
   static async checkCheckbox(selector) {
     if (!selector) {
-      throw new Error('[CHECK] Selector is required to check checkbox');
+      throw new Error("Selector is required to check checkbox");
     }
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[CHECK] Locator for selector "${selector}" not found.`);
+    await pageFixture.getPage().waitForSelector(selector, { timeout: 5000 });
+    if (!(await pageFixture.getPage().$(selector))) {
+      throw new Error(`Element not found: ${selector}`);
     }
     try {
-      console.log(`[CHECK] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      console.log(`[CHECK] Checking ${selector}`);
-      await locator.check();
-      console.log(`[SUCCESS] Checked checkbox ${selector}`);
+      await pageFixture.getPage().check(selector);
+      console.log(`Checked checkbox ${selector}`);
     } catch (error) {
-      console.error(`[ERROR] Failed to check checkbox ${selector}:`, error);
-      const screenshotPath = `error-checkCheckbox-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Check failed on selector: ${selector}`);
+      console.error(`Failed to check checkbox ${selector}:`, error);
+      throw error;
     }
   }
 
   static async uncheckCheckbox(selector) {
-    if (!selector) {
-      throw new Error('[UNCHECK] Selector is required to uncheck checkbox');
-    }
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[UNCHECK] Locator for selector "${selector}" not found.`);
-    }
     try {
-      console.log(`[UNCHECK] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      console.log(`[UNCHECK] Unchecking ${selector}`);
-      await locator.uncheck();
-      console.log(`[SUCCESS] Unchecked checkbox ${selector}`);
+      await pageFixture.getPage().uncheck(selector);
+      console.log(`Unchecked checkbox ${selector}`);
     } catch (error) {
-      console.error(`[ERROR] Failed to uncheck checkbox ${selector}:`, error);
-      const screenshotPath = `error-uncheckCheckbox-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Uncheck failed on selector: ${selector}`);
+      console.error(`Failed to uncheck checkbox ${selector}:`, error);
+      throw error;
     }
   }
 
   static async selectOption(selector, value) {
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[SELECT] Locator for selector "${selector}" not found.`);
-    }
     try {
-      console.log(`[SELECT] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      console.log(`[SELECT] Selecting option ${value} in ${selector}`);
-      await locator.selectOption(value);
-      console.log(`[SUCCESS] Selected option ${value} in ${selector}`);
+      await pageFixture.getPage().selectOption(selector, value);
+      console.log(`Selected option ${value} in ${selector}`);
     } catch (error) {
-      console.error(`[ERROR] Failed to select option ${value} in ${selector}:`, error);
-      const screenshotPath = `error-selectOption-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Select option failed on selector: ${selector}`);
+      console.error(`Failed to select option ${value} in ${selector}:`, error);
+      throw error;
     }
   }
 
@@ -359,111 +244,41 @@ export class playwrightUtils {
 
   // Assertions
   static async assertElementText(selector, expectedText) {
-  const page = pageFixture.getPage();
-  const locator = page.locator(selector);
-
-  try {
-    console.log(`[ASSERT] Waiting for element "${selector}" to be visible...`);
-    await expect(locator).toBeVisible({ timeout: 5000 });
-
-    console.log(`[ASSERT] Checking if element "${selector}" has text: "${expectedText}"`);
-    await expect(locator).toHaveText(expectedText, { timeout: 5000 });
-
-    console.log(`[SUCCESS] Element "${selector}" has expected text.`);
-  } catch (error) {
-    console.error(`[ERROR] Text assertion failed for "${selector}":`, error);
-
-    const screenshotPath = `screenshots/error-assertElementText-${Date.now()}.png`;
-    await page.screenshot({ path: screenshotPath, fullPage: true });
-    console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-
-    throw new Error(`Expected text "${expectedText}" not found in selector: "${selector}"`);
+    const text = await pageFixture.getPage().textContent(selector);
+    if (text !== expectedText) {
+      throw new Error(`Expected text "${expectedText}" but found "${text}"`);
+    }
+    console.log(`Element ${selector} has expected text: ${expectedText}`);
   }
-}
 
   static async assertElementVisible(selector) {
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[ASSERT] Locator for selector "${selector}" not found.`);
-    }
-    try {
-      console.log(`[ASSERT] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      console.log(`[SUCCESS] Element ${selector} is visible`);
-    } catch (error) {
-      console.error(`[ERROR] Element ${selector} is not visible:`, error);
-      const screenshotPath = `error-assertElementVisible-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Assert visible failed on selector: ${selector}`);
-    }
+    const visible = await pageFixture.getPage().isVisible(selector);
+    if (!visible) throw new Error(`Element ${selector} is not visible`);
+    console.log(`Element ${selector} is visible`);
   }
 
   static async assertElementChecked(selector) {
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[ASSERT] Locator for selector "${selector}" not found.`);
-    }
-    try {
-      console.log(`[ASSERT] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      const checked = await locator.isChecked();
-      if (!checked) throw new Error(`[ASSERT] Element ${selector} is not checked`);
-      console.log(`[SUCCESS] Element ${selector} is checked`);
-    } catch (error) {
-      console.error(`[ERROR] Failed to assert checked for ${selector}:`, error);
-      const screenshotPath = `error-assertElementChecked-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Assert checked failed on selector: ${selector}`);
-    }
+    const checked = await pageFixture.getPage().isChecked(selector);
+    if (!checked) throw new Error(`Element ${selector} is not checked`);
+    console.log(`Element ${selector} is checked`);
   }
 
   static async assertElementNotChecked(selector) {
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[ASSERT] Locator for selector "${selector}" not found.`);
-    }
-    try {
-      console.log(`[ASSERT] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      const checked = await locator.isChecked();
-      if (checked) throw new Error(`[ASSERT] Element ${selector} is checked but should not be`);
-      console.log(`[SUCCESS] Element ${selector} is not checked`);
-    } catch (error) {
-      console.error(`[ERROR] Failed to assert not checked for ${selector}:`, error);
-      const screenshotPath = `error-assertElementNotChecked-${Date.now()}.png`;
-      await pageFixture.getPage().screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      console.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw new Error(`Assert not checked failed on selector: ${selector}`);
-    }
+    const checked = await pageFixture.getPage().isChecked(selector);
+    if (checked) throw new Error(`Element ${selector} is checked but should not be`);
+    console.log(`Element ${selector} is not checked`);
   }
 
   // Screenshot
   static async takeScreenshot(path) {
-    try {
-      await pageFixture.getPage().screenshot({ path });
-      console.log(`[SCREENSHOT] Screenshot taken and saved to ${path}`);
-    } catch (error) {
-      console.error(`[ERROR] Failed to take screenshot at ${path}:`, error);
-      throw new Error(`Screenshot failed at path: ${path}`);
-    }
+    await pageFixture.getPage().screenshot({ path });
+    console.log(`Screenshot taken and saved to ${path}`);
   }
 
   static async screenshotElement(selector, path) {
-    const locator = pageFixture.getPage().locator(selector);
-    if (!locator) {
-      throw new Error(`[SCREENSHOT] Locator for selector "${selector}" not found.`);
-    }
-    try {
-      console.log(`[SCREENSHOT] Waiting for ${selector} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
-      await locator.screenshot({ path });
-      console.log(`[SCREENSHOT] Screenshot of ${selector} saved to ${path}`);
-    } catch (error) {
-      console.error(`[ERROR] Failed to screenshot ${selector}:`, error);
-      throw new Error(`Screenshot failed for selector: ${selector}`);
-    }
+    const el = await pageFixture.getPage().$(selector);
+    await el.screenshot({ path });
+    console.log(`Screenshot of ${selector} saved to ${path}`);
   }
 
   // Waits
@@ -840,99 +655,4 @@ export class playwrightUtils {
     await element.click();
     console.log(`Clicked first element for selector: ${selector}`);
   }
-  static async pauseThePage(){
-    await pageFixture.getPage().pause();
-    console.log('Paused the page');
-  }
-  /**
-   * Find an element inside a container by tag and attribute(s) or label text.
-   * @param {string} containerSelector - Selector for the container (e.g., 'div.login-form')
-   * @param {string} tag - Tag name to search for (e.g., 'input', 'button')
-   * @param {object} matcher - Key-value pairs to match (e.g., { placeholder: 'Email', name: 'email' })
-   * @param {object} [options] - Optional: { matchLabel: true } to match by label text
-   * @returns {Promise<Locator>} - Playwright Locator for the matched element
-   */
-  static async findElementInContainer(containerSelector, tag, matcher = {}, options = {}) {
-    const page = pageFixture.getPage();
-    if (!page) throw new Error('pageFixture.page is not initialized');
-    try {
-      Logger.log(`[FIND] Searching for <${tag}> in ${containerSelector} with matcher: ${JSON.stringify(matcher)}`);
-      const container = page.locator(containerSelector);
-      await expect(container).toBeVisible({ timeout: 5000 });
-      let elements = container.locator(tag);
-      const count = await elements.count();
-      for (let i = 0; i < count; i++) {
-        const el = elements.nth(i);
-        let allMatch = true;
-        for (const [attr, value] of Object.entries(matcher)) {
-          const attrVal = await el.getAttribute(attr);
-          if (attrVal !== value) {
-            allMatch = false;
-            break;
-          }
-        }
-        // Optionally match by label text
-        if (allMatch && options.matchLabel && matcher.label) {
-          const id = await el.getAttribute('id');
-          if (id) {
-            const label = container.locator(`label[for='${id}']`);
-            if (await label.count() > 0) {
-              const labelText = await label.textContent();
-              if (labelText && labelText.trim() !== matcher.label) {
-                allMatch = false;
-              }
-            } else {
-              allMatch = false;
-            }
-          } else {
-            allMatch = false;
-          }
-        }
-        if (allMatch) {
-          Logger.log(`[FIND] Found matching <${tag}> at index ${i}`);
-          return el;
-        }
-      }
-      throw new Error(`No <${tag}> found in ${containerSelector} matching ${JSON.stringify(matcher)}`);
-    } catch (error) {
-      Logger.error(`[FIND ERROR] ${error}`);
-      const screenshotPath = `error-findElementInContainer-${Date.now()}.png`;
-      await page.screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
-      Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
-      throw error;
-    }
-  }
-  
-  static async clickSingleElementInAllElements(selector, expectedText){
-    const locators = await pageFixture.getPage().locator(selector).all();
-    if (locators.length === 0) {
-      throw new Error("No elements found for selector: " + selector);
-    }
-    for (let ele of locators) {
-      const locatorText = (await ele.textContent() || '').trim();
-      if (locatorText.includes(expectedText)) {
-        await ele.click();
-        Logger.log(`Clicked element with text containing: ${expectedText}`);
-        return;
-      }
-    }
-    throw new Error(`No element with text containing '${expectedText}' found for selector: ${selector}`);
-  }
- 
- static async assertElementInAllElements(selector, expectedText) {
-    const locators = await pageFixture.getPage().locator(selector).allTextContents();
-    if (locators.length === 0) {
-      throw new Error("No elements found for selector: " + selector);
-    }
-    for (let ele of locators) {
-      const trimmed = (ele || '').trim();
-      if (trimmed === expectedText.trim()) {
-        expect(trimmed).toBe(expectedText.trim());
-        Logger.log(`[ASSERT] Element with text '${expectedText}' found for selector: ${selector}`);
-        return;
-      }
-    }
-    Logger.error(`[ASSERT] No element with exact text '${expectedText}' found. Actual texts: ${JSON.stringify(locators)}`);
-    throw new Error(`No element with exact text '${expectedText}' found for selector: ${selector}`);
-  }
- }
+}
