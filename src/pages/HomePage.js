@@ -1,17 +1,17 @@
 import { LoginPageLocators } from '../pageobjects/loginPageLocators.js';
-import { playwrightUtils } from '../utils/playwrightUtils.js';
+import { playwrightUtils as pw } from '../utils/playwrightUtils.js';
 
 
 export class HomePage {
-    async navigateTo(){
-        await playwrightUtils.navigateTo(process.env.BASE_URL);
-    }
-    async verifyURL(expectedUrl){
-        await playwrightUtils.verifyURL(expectedUrl);
+    async userNavigateToApplicationURL(){
+        await pw.navigateTo(process.env.BASE_URL);
     }
     async clickSignUporLoginButton(){
-        await playwrightUtils.clickLocatorByXpathOrCSS(LoginPageLocators.HomePageSignUporLoginButton)
-
+        await pw.clickLocatorByXpathOrCSS(LoginPageLocators.HomePageSignUporLoginButton);
+        await pw.verifyURL('/login');
+    }
+    async userLandsOnApplicationHomePage(){
+         await pw.verifyURL('account/account');
     }
 
 }

@@ -14,16 +14,16 @@ const loginPage = new LoginPage();
 const homePage = new HomePage();
 
 Given('the user navigates to the application URL', async function () {
-  await homePage.navigateTo();
+  await homePage.userNavigateToApplicationURL();
 });
 
 Then('verify the user lands on the application home page', async function () {
-  await homePage.verifyURL('account/account');
-  await homePage.verifyProfileNameIsDisplayed();
+  await homePage.userLandsOnApplicationHomePage();
 });
 
 When('the user clicks on the logout button', async function(){
-  await loginPage.clickLogoffButton();
+  await loginPage.userClicksOnLogoutButton();
+  
 })
 
 Then('verify the user logsoff successfully', async function(){
@@ -31,28 +31,22 @@ Then('verify the user logsoff successfully', async function(){
 })
 
 When('the user clicks on the signup or login button', async function(){
-    await homePage.clickSignUporLoginButton();
-    await homePage.verifyURL('/login');
+  await homePage.clickSignUporLoginButton();
+    
 })
 Then('the user creates a new account with valid details', async function(){
-    await loginPage.enterSignUpDetails();
-    await loginPage.clickTitleOnMr();
-    await loginPage.fillPassword();
-    await loginPage.selectDateOfBirth();
-    await loginPage.fillFirstName();
-    await loginPage.fillLastName();
-    await loginPage.fillCompany();
-    await loginPage.fillAddress1();
-    await loginPage.fillAddress2();
-    await loginPage.selectCountry();
-    await loginPage.fillState();
-    await loginPage.fillCity(); 
-    await loginPage.fillZipCode();
-    await loginPage.fillMobileNumber();
-    await loginPage.clickCreateAccountButton();
+    await loginPage.userCreatesNewAccount();
 })
 
 When('the user enter valid email and password', async function(){
-  await loginPage.enterValidLoginEmailAddress();
-  await loginPage.fillValidLoginPassword();
+  await loginPage.userEntersValidEmailAndPassword();
+})
+
+Then('the user should be redirected to the home page', async function(){
+  await loginPage.verifyUserIsLoggedIn();
+})
+
+Then ('the user should be redirected to the login page', async function(){
+  await loginPage.userShouldBeRedirectedToLoginPage();
+  
 })

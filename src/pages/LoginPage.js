@@ -5,7 +5,10 @@ import { FakerUtils } from '../utils/fakerUtils.js';
 
 
 export class LoginPage {
-    
+    async userClicksOnLogoutButton(){
+       await pw.clickBySelector(LoginPageLocators.LoginPageLogOutBtn);
+        await pw.waitForPageLoad('networkidle');
+    }
     async enterName(){
         await pw.fillInput(LoginPageLocators.LoginPageName, await FakerUtils.generateRandomFirstName());
     }
@@ -15,7 +18,29 @@ export class LoginPage {
     async clickSignUptBtn(){
         await pw.clickBySelector(LoginPageLocators.LoginPageSignUpBtn)
     }
+    async userCreatesNewAccount(){
+        await this.enterSignUpDetails();
+        await this.clickTitleOnMr();
+        await this.fillPassword();
+        await this.selectDateOfBirth();
+        await this.fillFirstName();
+        await this.fillLastName();
+        await this.fillCompany();
+        await this.fillAddress1();
+        await this.fillAddress2();
+        await this.selectCountry();
+        await this.fillState();
+        await this.fillCity();
+        await this.fillZipCode();
+        await this.fillMobileNumber();
+        await this.clickCreateAccountButton();
+    }
+    async userEntersValidEmailAndPassword(){
+         await this.enterValidLoginEmailAddress();
+         await this.fillValidLoginPassword();
+         await this.clickLoginAccountLoginButton();
 
+    }
     async enterSignUpDetails(){
         await this.enterName();
         await this.enterEmailAddress();
@@ -73,12 +98,23 @@ export class LoginPage {
         await pw.assertElementText(LoginPageLocators.LoginPageAccountAdditionalInfo, 'You can now take advantage of member privileges to enhance your online shopping experience with us.');
         await pw.assertElementVisible(LoginPageLocators.LoginPageContinueBtn);
     }
-    static async enterValidLoginEmailAddress(){
-        const locator = await pw.getLocator(LoginPageLocators.LoginAccountEmailAddress);
-        await pw.fillInput(locator.first(), process.env.APP_USERNAME);
+    async enterValidLoginEmailAddress(){
+        await pw.fillInput(LoginPageLocators.LoginAccountEmailAddress, process.env.APP_LOGIN_USERNAME);
     }
-    static async fillValidLoginPassword(){
+    async fillValidLoginPassword(){
         await pw.fillInput(LoginPageLocators.LoginAccountPassword, process.env.APP_PASSWORD);
+    }
+    async clickLoginAccountLoginButton(){
+        await pw.clickBySelector(LoginPageLocators.LoginAccountLoginBtn);
+    }
+    async verifyUserIsLoggedIn(){
+        await pw.assertElementVisible(LoginPageLocators.LoginPageLogOutBtn);
+        await pw.assertElementText(LoginPageLocators.LoginPageLogOutBtn, 'Logout');
+        await pw.assertElementVisible(LoginPageLocators.LoginPageDeleteAccountBtn);
+    }
+    async userShouldBeRedirectedToLoginPage(){
+        await pw.verifyURL('/login');
+        await pw.assertElementVisible(LoginPageLocators.HomePageSignUporLoginButton);
     }
     
 }

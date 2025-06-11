@@ -24,6 +24,9 @@ export const LoginPageLocators = {
   LoginPageAccountCongratsMessage: '#form div.container p:first-of-type',
   LoginPageAccountAdditionalInfo: '#form div.container p:last-of-type',
   LoginPageContinueBtn: 'a.btn.btn-primary',
-  LoginAccountEmailAddress: "input[name='email']",
-  LoginAccountPassword: "input[name='password']"
+  LoginAccountEmailAddress: "input[data-qa='login-email']",
+  LoginAccountPassword: "input[name='password']",
+  LoginAccountLoginBtn: "button[data-qa='login-button']",
+  LoginPageLogOutBtn: "a[href='/logout']",
+  LoginPageDeleteAccountBtn: "a[href='/delete_account']"
 };
