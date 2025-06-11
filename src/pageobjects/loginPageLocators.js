@@ -1,5 +1,5 @@
 export const LoginPageLocators = {
-  HomePageSignUporLoginButton: 'a[href="/login"]',
+  HomePageSignUporLoginButton: "a[href='/login']",
   LoginPageName: "input[placeholder='Name']",
   LoginPageEmailAddress: "div.signup-form input[placeholder='Email Address']",
   LoginPageSignUpBtn: "button[data-qa='signup-button']",
