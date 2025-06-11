@@ -178,12 +178,13 @@ export class playwrightUtils {
       throw new Error(`Locator for "${locatorStr}" not found.`);
     }
     try {
+      const timeout = options.timeout || 15000; // Increased default timeout for CI
       Logger.log(`[CLICK] Waiting for ${locatorStr} to be visible...`);
       console.log(`[CLICK] Waiting for ${locatorStr} to be visible...`);
-      await expect(locator).toBeVisible({ timeout: 5000 });
+      await expect(locator).toBeVisible({ timeout });
       Logger.log(`[CLICK] Attempting to click ${locatorStr}`);
       console.log(`[CLICK] Attempting to click ${locatorStr}`);
-      await locator.click({ timeout: 5000, ...options });
+      await locator.click({ timeout, ...options });
       Logger.log(`[SUCCESS] Clicked element by locator: ${locatorStr}`);
       console.log(`[SUCCESS] Clicked element by locator: ${locatorStr}`);
     } catch (error) {
@@ -897,6 +898,30 @@ export class playwrightUtils {
       await page.screenshot({ path: `screenshots/${screenshotPath}`, fullPage: true });
       Logger.error(`[SCREENSHOT] Saved to ${screenshotPath}`);
       throw error;
+    }
+  }
+
+  // Utility to close cookie banner if present
+  static async closeCookieBannerIfPresent() {
+    const page = pageFixture.getPage();
+    // Try common selectors for cookie banners
+    const selectors = [
+      '#cookie-accept',
+      '.cookie-accept',
+      'button[aria-label*="cookie"]',
+      'button:has-text("Accept")',
+      'button:has-text("Got it")',
+      '.cc-btn',
+    ];
+    for (const sel of selectors) {
+      try {
+        const el = page.locator(sel);
+        if (await el.count() > 0 && await el.isVisible()) {
+          await el.click({ timeout: 2000 });
+          Logger.log(`[COOKIE] Closed cookie banner with selector: ${sel}`);
+          break;
+        }
+      } catch {}
     }
   }
 }

@@ -7,7 +7,8 @@ export class HomePage {
         await pw.navigateTo(process.env.BASE_URL);
     }
     async clickSignUporLoginButton(){
-        await pw.clickLocatorByXpathOrCSS(LoginPageLocators.HomePageSignUporLoginButton);
+        await pw.closeCookieBannerIfPresent(); // Close cookie banner if present (for CI reliability)
+        await pw.clickBySelector(LoginPageLocators.HomePageSignUporLoginButton);
         await pw.verifyURL('/login');
     }
     async userLandsOnApplicationHomePage(){
