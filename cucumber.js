@@ -20,7 +20,6 @@ const config = {
       resultsDir: 'allure-results'
     }
   },
-  defaultTimeout: 20000 // Set global step timeout to 20 seconds
 };
 
 export default config;

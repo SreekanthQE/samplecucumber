@@ -3,23 +3,15 @@ import { playwrightUtils } from '../utils/playwrightUtils.js';
 
 
 export class HomePage {
-
-    static async navigateTo() {
+    async navigateTo(){
         await playwrightUtils.navigateTo(process.env.BASE_URL);
-        console.log("User navigated to the application URL");
     }
-    static async clickOnLoginRegisterButton() {
-        console.log("Waiting for Login/Register button to be visible...");        console.log("Clicking Login/Register button...");
-        await playwrightUtils.clickByText(LoginPageLocators.LoginPageLoginRegister);
-        await playwrightUtils.waitForPageLoad(20000);
-        console.log("User clicked on Login/Register button and waited for page load");
+    async verifyURL(expectedUrl){
+        await playwrightUtils.verifyURL(expectedUrl);
     }
-    static async verifyURL(){
-        await playwrightUtils.verifyURL('account/account')
-    }
-    static async verifyProfileNameIsDisplayed() {
-        await playwrightUtils.waitForElementVisible(LoginPageLocators.LoginPageProfileName, 10000);
-        await playwrightUtils.assertElementText(LoginPageLocators.LoginPageProfileName, "Welcome back " + process.env.APP_USERNAME);
+    async clickSignUporLoginButton(){
+        await playwrightUtils.clickLocatorByXpathOrCSS(LoginPageLocators.HomePageSignUporLoginButton)
+
     }
 
 }

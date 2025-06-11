@@ -1,29 +1,28 @@
-// @ts-check
-const { devices } = require('@playwright/test');
+import { devices } from '@playwright/test';
 
 const config = {
   testDir: './src',
-  retries: 0,
-
-  /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
-  expect: {
-    timeout: 5000,
-  },
-
-  // Add both HTML and Allure reporters here
+  timeout: 60 * 1000,
+  retries: process.env.CI ? 2 : 0,
+  outputDir: 'test-results/',
+  expect: { timeout: 5000 },
   reporter: [
-    ['html'],
-    ['allure-playwright']
+    ['html', { outputFolder: 'reports/html', open: 'never' }],
+    ['allure-playwright'],
+    ['list'],
   ],
-
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    browserName: 'chromium',
-    headless: true,
     screenshot: 'on',
-    trace: 'on', // off,on
+    trace: 'on',
   },
+  projects: [
+    { name: 'Chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'Firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'WebKit', use: { ...devices['Desktop Safari'] } },
+  ],
+  // globalSetup: require.resolve('./src/support/global-setup.js'),
+  // globalTeardown: require.resolve('./src/support/global-teardown.js'),
+  // webServer: { ... }
 };
 
-module.exports = config;
+export default config;

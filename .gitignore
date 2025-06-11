@@ -4,3 +4,5 @@ playwright-report/
 allure-results/
 allure-report/
 reports/
+logs/
+screenshots/

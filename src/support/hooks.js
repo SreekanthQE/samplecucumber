@@ -1,19 +1,25 @@
-import { After, Before, AfterStep } from '@cucumber/cucumber';
+import { setDefaultTimeout, After, Before, AfterStep } from '@cucumber/cucumber';
 import * as playwright from 'playwright';
 import { pageFixture } from './pageFixture.js';
+
+setDefaultTimeout(60000); // Set global step timeout to 60 seconds
 
 Before({ timeout: 15000 }, async function () {
   // This hook will be executed before all scenarios
   const isCI = process.env.CI === 'true';
   const headless = isCI ? true : false;
+  const browserType = process.env.BROWSER || 'chromium';;
+  console.log(`Using browser: ${browserType}`);
 
   console.log(`Running in CI: ${isCI}`);
   console.log(`Launching browser with headless: ${headless}`);
 
-  const browser = await playwright.chromium.launch({
+  const browser = await playwright[browserType].launch({
     headless: headless,
   });
-  const context = await browser.newContext();
+  const context = await browser.newContext({
+    viewport: {width: 1520, height: 728}
+  });
   const page = await context.newPage();
 
   // Set on singleton instance
