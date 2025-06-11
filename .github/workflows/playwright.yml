@@ -21,6 +21,9 @@ on:
           - '@regression'
           - '@sanity'
           - '@sample'
+          - '@verifylogin'
+          - '@verifylogout'
+          - '@createnewaccount'
       feature:
         description: 'Feature file path (e.g. features/login.feature)'
         required: false
@@ -34,7 +37,7 @@ on:
         required: false
 
 jobs:
-  extract-tags:
+  run-cucumber-playwright:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -52,37 +55,14 @@ jobs:
         run: npx playwright install
 
       - name: Extract Cucumber tags
-        id: extract-tags
         run: |
           node scripts/extract-cucumber-tags.cjs
-          TAGS=$(jq -c '.tags' cucumber-tags.json)
-          echo "tags=$TAGS" >> $GITHUB_OUTPUT
-
-  run-cucumber-playwright:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        tag: ${{ fromJson(needs.extract-tags.outputs.tags) }}
-    needs: extract-tags
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Playwright browsers
-        run: npx playwright install
+          echo "Available tags: $(cat cucumber-tags.json)"
 
       - name: Run scenarios
         run: |
           echo "BROWSER: ${{ github.event.inputs.browser }}"
-          echo "TAG: ${{ matrix.tag }}"
+          echo "TAG: ${{ github.event.inputs.tag }}"
           echo "FEATURE: ${{ github.event.inputs.feature }}"
           echo "SCENARIO: ${{ github.event.inputs.scenario }}"
           echo "BASE_URL: ${{ github.event.inputs.baseURL }}"
@@ -92,8 +72,8 @@ jobs:
 
           CMD="npx cucumber-js ${{ github.event.inputs.feature }} --exit"
 
-          if [ -n "${{ matrix.tag }}" ]; then
-            CMD="$CMD --tags '${{ matrix.tag }}'"
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            CMD="$CMD --tags '${{ github.event.inputs.tag }}'"
           fi
 
           if [ -n "${{ github.event.inputs.scenario }}" ]; then
