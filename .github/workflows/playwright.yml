@@ -37,7 +37,7 @@ on:
         required: false
 
 jobs:
-  run-cucumber-playwright:
+  run-cucumber-playwright-scenarios::
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
