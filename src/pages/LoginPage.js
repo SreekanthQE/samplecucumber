@@ -131,5 +131,13 @@ export class LoginPage {
     async verifyUserShouldSeeEmailExistsText(emailExistingUserSignUpText){
         await pw.assertElementTextByText('Email Address already exist!', 'Email Address already exist!');
     }
+    async fillContactUsFormWithValidDetails(){
+        await pw.fillInput(LoginPageLocators.ContactUsFormName, await FakerUtils.generateRandomFirstName());
+        await pw.fillInput(LoginPageLocators.ContactUsFormEmail, await FakerUtils.generateRandomEmail());
+        await pw.fillInput(LoginPageLocators.ContactUsFormSubject, await FakerUtils.generateRandomSubject());
+        await pw.fillInput(LoginPageLocators.ContactUsFormMessage, await FakerUtils.generateRandomMessage());
+        await pw.uploadFile(LoginPageLocators.ContactUsUploadFile, './src/testdata/files/uploadSample.txt');
+        await pw.clickBySelector(LoginPageLocators.ContactUsSubmitBtn);
+    }
 
 }

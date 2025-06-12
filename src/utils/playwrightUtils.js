@@ -6,12 +6,14 @@ import { expect } from '@playwright/test';
  * Utility class for common Playwright actions and assertions
  * This class provides methods for navigation, element interaction, assertions, and more.
  */
+
+
 export class playwrightUtils {
   static async navigateTo(url) {
     if (!url) throw new Error("URL is required for navigation");
     try {
       if (!pageFixture.getPage()) throw new Error("pageFixture.page is not initialized");
-      await pageFixture.getPage().goto(url, { timeout: 40000});
+      await pageFixture.getPage().goto(url, { timeout: 60000});
       console.log(`Navigated to ${url}`);
     } catch (error) {
       console.error(`Failed to navigate to ${url}:`, error);
@@ -986,6 +988,10 @@ export class playwrightUtils {
   }
 
   static async assertElementText(selector, expectedText) {
+    await pageFixture.getPage().waitForSelector(selector, {state: 'visible', timeout: 5000});
+    if (!selector || !expectedText) {
+      throw new Error(selector +"Selector is not visible");
+    }
     try {
       const text = await pageFixture.getPage().textContent(selector);
       if (text && text.trim() === expectedText.trim()) {
@@ -1017,6 +1023,20 @@ export class playwrightUtils {
   } catch (error) {
     throw new Error(`❌ assertElementTextByText("${selectorText}", "${expectedText}") failed: ${error.message}`);
   }
+  }
+  static async uploadFile(selector, filePath){
+    try {
+      const page = pageFixture.getPage();
+      const input = await page.locator(selector);
+      await input.setInputFiles(filePath);
+      console.log(`Uploaded file '${filePath}' to selector: ${selector}`);
+    } catch (error) {
+      console.error(`Error in uploadFile(${selector}, ${filePath}):`, error);
+      throw error;
+    }
+  }
+  static async pauseThePage(){
+    await pageFixture.getPage().pause();
   }
 
 }

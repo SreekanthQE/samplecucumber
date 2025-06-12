@@ -38,5 +38,11 @@ export class FakerUtils{
     static async generateRandomCompany(){
         return faker.company.name();
     }
+    static async generateRandomSubject(){
+        return faker.lorem.sentence(6);
+    }
+    static async generateRandomMessage(){
+        return faker.lorem.paragraph(3);
+    }
 
 }

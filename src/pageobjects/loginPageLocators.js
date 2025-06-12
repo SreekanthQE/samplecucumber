@@ -32,5 +32,12 @@ export const LoginPageLocators = {
   LoginPageNewSignUpText: 'div.signup-form h2',
   LoginPageExistingUserSignUpName: "input[placeholder='Name']",
   LoginPageExistingUserSignUpEmail: "//div[@class='signup-form']//following::input[@placeholder='Email Address']",
-  LoginPageExistingUserSignupBtn: "button[data-qa='signup-button']"
+  LoginPageExistingUserSignupBtn: "button[data-qa='signup-button']",
+  ContactUsFormName: "input[data-qa='name']",
+  ContactUsFormEmail: "input[data-qa='email']",
+  ContactUsFormSubject: "input[data-qa='subject']",
+  ContactUsFormMessage: "textarea[data-qa='message']",
+  ContactUsUploadFile: "input[type='file']",
+  ContactUsSubmitBtn: "input[data-qa='submit-button']",
+  ContactUsFormSuccessMessage: "div.status.alert.alert-success"
 };
