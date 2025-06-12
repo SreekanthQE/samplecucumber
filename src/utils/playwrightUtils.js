@@ -75,7 +75,8 @@ export class playwrightUtils {
       }
       throw new Error(`Element not found by selector, text, or role: ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `clickElement(${selector})`);
+      console.error(`Error in clickElement(${selector}):`, error);
+      throw error;
     }
   }
 
@@ -87,7 +88,8 @@ export class playwrightUtils {
       await pageFixture.getPage().click(selector, clickOptions);
       console.log(`Clicked on element ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `clickBySelector(${selector})`);
+      console.error(`Error in clickBySelector(${selector}):`, error);
+      throw error;
     }
   }
 
@@ -98,7 +100,8 @@ export class playwrightUtils {
       await locator.click();
       console.log(`Clicked element by text: ${text}`);
     } catch (error) {
-      this.logAndThrow(error, `clickByText(${text})`);
+      console.error(`Error in clickByText(${text}):`, error);
+      throw error;
     }
   }
 
@@ -111,7 +114,8 @@ export class playwrightUtils {
       await byRole.click(clickOptions);
       console.log(`Clicked element by role: ${role}`);
     } catch (error) {
-      this.logAndThrow(error, `clickByRole(${role})`);
+      console.error(`Error in clickByRole(${role}):`, error);
+      throw error;
     }
   }
 
@@ -123,7 +127,8 @@ export class playwrightUtils {
       await el.click(clickOptions);
       console.log(`Clicked element by locator: ${locator}`);
     } catch (error) {
-      this.logAndThrow(error, `clickLocatorByXpathOrCSS(${locator})`);
+      console.error(`Error in clickLocatorByXpathOrCSS(${locator}):`, error);
+      throw error;
     }
   }
 
@@ -136,7 +141,8 @@ export class playwrightUtils {
       await el.click(clickOptions);
       console.log(`Clicked element by test id: ${testId}`);
     } catch (error) {
-      this.logAndThrow(error, `clickByTestId(${testId})`);
+      console.error(`Error in clickByTestId(${testId}):`, error);
+      throw error;
     }
   }
 
@@ -149,7 +155,8 @@ export class playwrightUtils {
       await el.click(clickOptions);
       console.log(`Clicked element by label: ${label}`);
     } catch (error) {
-      this.logAndThrow(error, `clickByLabel(${label})`);
+      console.error(`Error in clickByLabel(${label}):`, error);
+      throw error;
     }
   }
 
@@ -171,7 +178,8 @@ export class playwrightUtils {
       await pageFixture.getPage().fill(selector, value);
       console.log(`✅ Filled input ${selector} with value: ${value}`);
     } catch (error) {
-      this.logAndThrow(error, `fillInput(${selector}, ${value})`);
+      console.error(`Error in fillInput(${selector}, ${value}):`, error);
+      throw error;
     }
   }
 
@@ -187,7 +195,8 @@ export class playwrightUtils {
       await pageFixture.getPage().check(selector);
       console.log(`Checked checkbox ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `checkCheckbox(${selector})`);
+      console.error(`Error in checkCheckbox(${selector}):`, error);
+      throw error;
     }
   }
 
@@ -196,7 +205,8 @@ export class playwrightUtils {
       await pageFixture.getPage().uncheck(selector);
       console.log(`Unchecked checkbox ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `uncheckCheckbox(${selector})`);
+      console.error(`Error in uncheckCheckbox(${selector}):`, error);
+      throw error;
     }
   }
 
@@ -205,7 +215,8 @@ export class playwrightUtils {
       await pageFixture.getPage().selectOption(selector, value);
       console.log(`Selected option ${value} in ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `selectOption(${selector}, ${value})`);
+      console.error(`Error in selectOption(${selector}, ${value}):`, error);
+      throw error;
     }
   }
 
@@ -216,7 +227,8 @@ export class playwrightUtils {
       await frame.fill(inputSelector, value);
       console.log(`Filled iframe ${frameSelector} input ${inputSelector} with value: ${value}`);
     } catch (error) {
-      this.logAndThrow(error, `fillInIframe(${frameSelector}, ${inputSelector}, ${value})`);
+      console.error(`Error in fillInIframe(${frameSelector}, ${inputSelector}, ${value}):`, error);
+      throw error;
     }
   }
 
@@ -226,7 +238,8 @@ export class playwrightUtils {
       await frame.click(elementSelector);
       console.log(`Clicked ${elementSelector} in iframe ${frameSelector}`);
     } catch (error) {
-      this.logAndThrow(error, `clickInIframe(${frameSelector}, ${elementSelector})`);
+      console.error(`Error in clickInIframe(${frameSelector}, ${elementSelector}):`, error);
+      throw error;
     }
   }
 
@@ -235,7 +248,8 @@ export class playwrightUtils {
       await pageFixture.getPage().screenshot({ path });
       console.log(`Screenshot taken and saved to ${path}`);
     } catch (error) {
-      this.logAndThrow(error, `takeScreenshot(${path})`);
+      console.error(`Error in takeScreenshot(${path}):`, error);
+      throw error;
     }
   }
 
@@ -245,7 +259,8 @@ export class playwrightUtils {
       await el.screenshot({ path });
       console.log(`Screenshot of ${selector} saved to ${path}`);
     } catch (error) {
-      this.logAndThrow(error, `screenshotElement(${selector}, ${path})`);
+      console.error(`Error in screenshotElement(${selector}, ${path}):`, error);
+      throw error;
     }
   }
 
@@ -255,7 +270,8 @@ export class playwrightUtils {
       await pageFixture.getPage().waitForTimeout(ms);
       console.log(`Waited for ${ms} ms`);
     } catch (error) {
-      this.logAndThrow(error, `waitForTimeout(${ms})`);
+      console.error(`Error in waitForTimeout(${ms}):`, error);
+      throw error;
     }
   }
   static async waitForSelector(selector, options) {
@@ -263,7 +279,8 @@ export class playwrightUtils {
       await pageFixture.getPage().waitForSelector(selector, options);
       console.log(`Waited for selector ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `waitForSelector(${selector})`);
+      console.error(`Error in waitForSelector(${selector}):`, error);
+      throw error;
     }
   }
   static async waitForURL(urlOrRegex, options) {
@@ -271,7 +288,8 @@ export class playwrightUtils {
       await pageFixture.getPage().waitForURL(urlOrRegex, options);
       console.log(`Waited for URL: ${urlOrRegex}`);
     } catch (error) {
-      this.logAndThrow(error, `waitForURL(${urlOrRegex})`);
+      console.error(`Error in waitForURL(${urlOrRegex}):`, error);
+      throw error;
     }
   }
 
@@ -281,7 +299,8 @@ export class playwrightUtils {
       await pageFixture.getPage().press(selector, key);
       console.log(`Pressed key ${key} on ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `pressKey(${selector}, ${key})`);
+      console.error(`Error in pressKey(${selector}, ${key}):`, error);
+      throw error;
     }
   }
   static async typeText(selector, text, options) {
@@ -289,7 +308,8 @@ export class playwrightUtils {
       await pageFixture.getPage().type(selector, text, options);
       console.log(`Typed text '${text}' in ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `typeText(${selector}, ${text})`);
+      console.error(`Error in typeText(${selector}, ${text}):`, error);
+      throw error;
     }
   }
   static async keyboardDown(key) {
@@ -297,7 +317,8 @@ export class playwrightUtils {
       await pageFixture.getPage().keyboard.down(key);
       console.log(`Keyboard down: ${key}`);
     } catch (error) {
-      this.logAndThrow(error, `keyboardDown(${key})`);
+      console.error(`Error in keyboardDown(${key}):`, error);
+      throw error;
     }
   }
   static async keyboardUp(key) {
@@ -305,7 +326,8 @@ export class playwrightUtils {
       await pageFixture.getPage().keyboard.up(key);
       console.log(`Keyboard up: ${key}`);
     } catch (error) {
-      this.logAndThrow(error, `keyboardUp(${key})`);
+      console.error(`Error in keyboardUp(${key}):`, error);
+      throw error;
     }
   }
 
@@ -315,7 +337,8 @@ export class playwrightUtils {
       await pageFixture.getPage().mouse.move(x, y);
       console.log(`Mouse moved to (${x}, ${y})`);
     } catch (error) {
-      this.logAndThrow(error, `mouseMove(${x}, ${y})`);
+      console.error(`Error in mouseMove(${x}, ${y}):`, error);
+      throw error;
     }
   }
   static async mouseClick(x, y, options) {
@@ -323,7 +346,8 @@ export class playwrightUtils {
       await pageFixture.getPage().mouse.click(x, y, options);
       console.log(`Mouse clicked at (${x}, ${y})`);
     } catch (error) {
-      this.logAndThrow(error, `mouseClick(${x}, ${y})`);
+      console.error(`Error in mouseClick(${x}, ${y}):`, error);
+      throw error;
     }
   }
   static async mouseDown(options) {
@@ -331,7 +355,8 @@ export class playwrightUtils {
       await pageFixture.getPage().mouse.down(options);
       console.log('Mouse down');
     } catch (error) {
-      this.logAndThrow(error, 'mouseDown');
+      console.error('Error in mouseDown:', error);
+      throw error;
     }
   }
   static async mouseUp(options) {
@@ -339,7 +364,8 @@ export class playwrightUtils {
       await pageFixture.getPage().mouse.up(options);
       console.log('Mouse up');
     } catch (error) {
-      this.logAndThrow(error, 'mouseUp');
+      console.error('Error in mouseUp:', error);
+      throw error;
     }
   }
 
@@ -349,7 +375,8 @@ export class playwrightUtils {
       await pageFixture.getPage().setInputFiles(selector, files);
       console.log(`Set input files for ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `setInputFiles(${selector}, ${files})`);
+      console.error(`Error in setInputFiles(${selector}, ${files}):`, error);
+      throw error;
     }
   }
   static async waitForDownload(callback) {
@@ -361,7 +388,8 @@ export class playwrightUtils {
       console.log('Download started');
       return download;
     } catch (error) {
-      this.logAndThrow(error, 'waitForDownload');
+      console.error('Error in waitForDownload:', error);
+      throw error;
     }
   }
 
@@ -374,7 +402,8 @@ export class playwrightUtils {
         console.log(`Dialog ${action}ed`);
       });
     } catch (error) {
-      this.logAndThrow(error, `handleDialog(${action}, ${promptText})`);
+      console.error(`Error in handleDialog(${action}, ${promptText}):`, error);
+      throw error;
     }
   }
 
@@ -385,7 +414,8 @@ export class playwrightUtils {
       console.log('Got cookies');
       return cookies;
     } catch (error) {
-      this.logAndThrow(error, 'getCookies');
+      console.error('Error in getCookies:', error);
+      throw error;
     }
   }
   static async setCookies(cookies) {
@@ -393,7 +423,8 @@ export class playwrightUtils {
       await pageFixture.getPage().context().addCookies(cookies);
       console.log('Set cookies');
     } catch (error) {
-      this.logAndThrow(error, 'setCookies');
+      console.error('Error in setCookies:', error);
+      throw error;
     }
   }
   static async clearCookies() {
@@ -401,7 +432,8 @@ export class playwrightUtils {
       await pageFixture.getPage().context().clearCookies();
       console.log('Cleared cookies');
     } catch (error) {
-      this.logAndThrow(error, 'clearCookies');
+      console.error('Error in clearCookies:', error);
+      throw error;
     }
   }
   static async getLocalStorage() {
@@ -410,7 +442,8 @@ export class playwrightUtils {
       console.log('Got localStorage');
       return data;
     } catch (error) {
-      this.logAndThrow(error, 'getLocalStorage');
+      console.error('Error in getLocalStorage:', error);
+      throw error;
     }
   }
   static async setLocalStorage(key, value) {
@@ -418,7 +451,8 @@ export class playwrightUtils {
       await pageFixture.getPage().evaluate(([k, v]) => localStorage.setItem(k, v), [key, value]);
       console.log(`Set localStorage ${key}`);
     } catch (error) {
-      this.logAndThrow(error, `setLocalStorage(${key}, ${value})`);
+      console.error(`Error in setLocalStorage(${key}, ${value}):`, error);
+      throw error;
     }
   }
   static async clearLocalStorage() {
@@ -426,7 +460,8 @@ export class playwrightUtils {
       await pageFixture.getPage().evaluate(() => localStorage.clear());
       console.log('Cleared localStorage');
     } catch (error) {
-      this.logAndThrow(error, 'clearLocalStorage');
+      console.error('Error in clearLocalStorage:', error);
+      throw error;
     }
   }
   static async getSessionStorage() {
@@ -435,7 +470,8 @@ export class playwrightUtils {
       console.log('Got sessionStorage');
       return data;
     } catch (error) {
-      this.logAndThrow(error, 'getSessionStorage');
+      console.error('Error in getSessionStorage:', error);
+      throw error;
     }
   }
   static async setSessionStorage(key, value) {
@@ -443,7 +479,8 @@ export class playwrightUtils {
       await pageFixture.getPage().evaluate(([k, v]) => sessionStorage.setItem(k, v), [key, value]);
       console.log(`Set sessionStorage ${key}`);
     } catch (error) {
-      this.logAndThrow(error, `setSessionStorage(${key}, ${value})`);
+      console.error(`Error in setSessionStorage(${key}, ${value}):`, error);
+      throw error;
     }
   }
   static async clearSessionStorage() {
@@ -451,7 +488,8 @@ export class playwrightUtils {
       await pageFixture.getPage().evaluate(() => sessionStorage.clear());
       console.log('Cleared sessionStorage');
     } catch (error) {
-      this.logAndThrow(error, 'clearSessionStorage');
+      console.error('Error in clearSessionStorage:', error);
+      throw error;
     }
   }
 
@@ -462,7 +500,8 @@ export class playwrightUtils {
       console.log(`Element ${selector} enabled: ${enabled}`);
       return enabled;
     } catch (error) {
-      this.logAndThrow(error, `isEnabled(${selector})`);
+      console.error(`Error in isEnabled(${selector}):`, error);
+      throw error;
     }
   }
   static async isDisabled(selector) {
@@ -471,7 +510,8 @@ export class playwrightUtils {
       console.log(`Element ${selector} disabled: ${disabled}`);
       return disabled;
     } catch (error) {
-      this.logAndThrow(error, `isDisabled(${selector})`);
+      console.error(`Error in isDisabled(${selector}):`, error);
+      throw error;
     }
   }
   static async isEditable(selector) {
@@ -480,7 +520,8 @@ export class playwrightUtils {
       console.log(`Element ${selector} editable: ${editable}`);
       return editable;
     } catch (error) {
-      this.logAndThrow(error, `isEditable(${selector})`);
+      console.error(`Error in isEditable(${selector}):`, error);
+      throw error;
     }
   }
   static async isHidden(selector) {
@@ -489,7 +530,8 @@ export class playwrightUtils {
       console.log(`Element ${selector} hidden: ${hidden}`);
       return hidden;
     } catch (error) {
-      this.logAndThrow(error, `isHidden(${selector})`);
+      console.error(`Error in isHidden(${selector}):`, error);
+      throw error;
     }
   }
 
@@ -500,7 +542,8 @@ export class playwrightUtils {
       console.log(`Got attribute ${attr} from ${selector}: ${value}`);
       return value;
     } catch (error) {
-      this.logAndThrow(error, `getAttribute(${selector}, ${attr})`);
+      console.error(`Error in getAttribute(${selector}, ${attr}):`, error);
+      throw error;
     }
   }
   static async getProperty(selector, prop) {
@@ -509,7 +552,8 @@ export class playwrightUtils {
       console.log(`Got property ${prop} from ${selector}: ${value}`);
       return value;
     } catch (error) {
-      this.logAndThrow(error, `getProperty(${selector}, ${prop})`);
+      console.error(`Error in getProperty(${selector}, ${prop}):`, error);
+      throw error;
     }
   }
 
@@ -519,7 +563,8 @@ export class playwrightUtils {
       await pageFixture.getPage().focus(selector);
       console.log(`Focused on ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `focus(${selector})`);
+      console.error(`Error in focus(${selector}):`, error);
+      throw error;
     }
   }
   static async blur(selector) {
@@ -527,7 +572,8 @@ export class playwrightUtils {
       await pageFixture.getPage().$eval(selector, el => el.blur());
       console.log(`Blurred ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `blur(${selector})`);
+      console.error(`Error in blur(${selector}):`, error);
+      throw error;
     }
   }
 
@@ -537,7 +583,8 @@ export class playwrightUtils {
       await pageFixture.getPage().$eval(selector, el => el.scrollIntoView());
       console.log(`Scrolled to ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `scrollTo(${selector})`);
+      console.error(`Error in scrollTo(${selector}):`, error);
+      throw error;
     }
   }
   static async scrollBy(x, y) {
@@ -545,7 +592,8 @@ export class playwrightUtils {
       await pageFixture.getPage().evaluate(([dx, dy]) => window.scrollBy(dx, dy), [x, y]);
       console.log(`Scrolled by (${x}, ${y})`);
     } catch (error) {
-      this.logAndThrow(error, `scrollBy(${x}, ${y})`);
+      console.error(`Error in scrollBy(${x}, ${y}):`, error);
+      throw error;
     }
   }
 
@@ -556,7 +604,8 @@ export class playwrightUtils {
       console.log(`Page title: ${title}`);
       return title;
     } catch (error) {
-      this.logAndThrow(error, 'getTitle');
+      console.error('Error in getTitle:', error);
+      throw error;
     }
   }
   static async getURL() {
@@ -565,7 +614,8 @@ export class playwrightUtils {
       console.log(`Page URL: ${url}`);
       return url;
     } catch (error) {
-      this.logAndThrow(error, 'getURL');
+      console.error('Error in getURL:', error);
+      throw error;
     }
   }
   static async getText(selector) {
@@ -574,7 +624,8 @@ export class playwrightUtils {
       console.log(`Got text from ${selector}: ${text}`);
       return text;
     } catch (error) {
-      this.logAndThrow(error, `getText(${selector})`);
+      console.error(`Error in getText(${selector}):`, error);
+      throw error;
     }
   }
   static async getInnerHTML(selector) {
@@ -583,7 +634,8 @@ export class playwrightUtils {
       console.log(`Got innerHTML from ${selector}`);
       return html;
     } catch (error) {
-      this.logAndThrow(error, `getInnerHTML(${selector})`);
+      console.error(`Error in getInnerHTML(${selector}):`, error);
+      throw error;
     }
   }
   static async getOuterHTML(selector) {
@@ -592,7 +644,8 @@ export class playwrightUtils {
       console.log(`Got outerHTML from ${selector}`);
       return html;
     } catch (error) {
-      this.logAndThrow(error, `getOuterHTML(${selector})`);
+      console.error(`Error in getOuterHTML(${selector}):`, error);
+      throw error;
     }
   }
   static async countElements(selector) {
@@ -601,7 +654,8 @@ export class playwrightUtils {
       console.log(`Counted ${count} elements for ${selector}`);
       return count;
     } catch (error) {
-      this.logAndThrow(error, `countElements(${selector})`);
+      console.error(`Error in countElements(${selector}):`, error);
+      throw error;
     }
   }
   static async isChecked(selector) {
@@ -610,7 +664,8 @@ export class playwrightUtils {
       console.log(`Element ${selector} checked: ${checked}`);
       return checked;
     } catch (error) {
-      this.logAndThrow(error, `isChecked(${selector})`);
+      console.error(`Error in isChecked(${selector}):`, error);
+      throw error;
     }
   }
   static async isVisible(selector) {
@@ -619,7 +674,8 @@ export class playwrightUtils {
       console.log(`Element ${selector} visible: ${visible}`);
       return visible;
     } catch (error) {
-      this.logAndThrow(error, `isVisible(${selector})`);
+      console.error(`Error in isVisible(${selector}):`, error);
+      throw error;
     }
   }
   static async isHiddenElement(selector) {
@@ -628,7 +684,8 @@ export class playwrightUtils {
       console.log(`Element ${selector} hidden: ${hidden}`);
       return hidden;
     } catch (error) {
-      this.logAndThrow(error, `isHiddenElement(${selector})`);
+      console.error(`Error in isHiddenElement(${selector}):`, error);
+      throw error;
     }
   }
   static async dragAndDrop(source, target) {
@@ -636,7 +693,8 @@ export class playwrightUtils {
       await pageFixture.getPage().dragAndDrop(source, target);
       console.log(`Dragged ${source} to ${target}`);
     } catch (error) {
-      this.logAndThrow(error, `dragAndDrop(${source}, ${target})`);
+      console.error(`Error in dragAndDrop(${source}, ${target}):`, error);
+      throw error;
     }
   }
   static async doubleClick(selector) {
@@ -644,7 +702,8 @@ export class playwrightUtils {
       await pageFixture.getPage().dblclick(selector);
       console.log(`Double clicked ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `doubleClick(${selector})`);
+      console.error(`Error in doubleClick(${selector}):`, error);
+      throw error;
     }
   }
   static async rightClick(selector) {
@@ -652,7 +711,8 @@ export class playwrightUtils {
       await pageFixture.getPage().click(selector, { button: 'right' });
       console.log(`Right clicked ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `rightClick(${selector})`);
+      console.error(`Error in rightClick(${selector}):`, error);
+      throw error;
     }
   }
   static async hover(selector) {
@@ -660,7 +720,8 @@ export class playwrightUtils {
       await pageFixture.getPage().hover(selector);
       console.log(`Hovered over ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `hover(${selector})`);
+      console.error(`Error in hover(${selector}):`, error);
+      throw error;
     }
   }
 
@@ -670,7 +731,8 @@ export class playwrightUtils {
       await pageFixture.getPage().route(url, handler);
       console.log(`Intercepted requests to ${url}`);
     } catch (error) {
-      this.logAndThrow(error, `interceptRequest(${url})`);
+      console.error(`Error in interceptRequest(${url}):`, error);
+      throw error;
     }
   }
   static async removeRequestInterception(url) {
@@ -678,7 +740,8 @@ export class playwrightUtils {
       await pageFixture.getPage().unroute(url);
       console.log(`Removed interception for ${url}`);
     } catch (error) {
-      this.logAndThrow(error, `removeRequestInterception(${url})`);
+      console.error(`Error in removeRequestInterception(${url}):`, error);
+      throw error;
     }
   }
 
@@ -688,7 +751,8 @@ export class playwrightUtils {
       await pageFixture.getPage().setViewportSize({ width, height });
       console.log(`Set viewport size to ${width}x${height}`);
     } catch (error) {
-      this.logAndThrow(error, `setViewportSize(${width}, ${height})`);
+      console.error(`Error in setViewportSize(${width}, ${height}):`, error);
+      throw error;
     }
   }
   static async emulateDevice(device) {
@@ -697,7 +761,8 @@ export class playwrightUtils {
       await pageFixture.getPage().context().newPage(devices[device]);
       console.log(`Emulated device: ${device}`);
     } catch (error) {
-      this.logAndThrow(error, `emulateDevice(${device})`);
+      console.error(`Error in emulateDevice(${device}):`, error);
+      throw error;
     }
   }
 
@@ -708,7 +773,8 @@ export class playwrightUtils {
       console.log('Created new browser context');
       return context;
     } catch (error) {
-      this.logAndThrow(error, 'newContext');
+      console.error('Error in newContext:', error);
+      throw error;
     }
   }
   static async closeContext(context) {
@@ -716,7 +782,8 @@ export class playwrightUtils {
       await context.close();
       console.log('Closed browser context');
     } catch (error) {
-      this.logAndThrow(error, 'closeContext');
+      console.error('Error in closeContext:', error);
+      throw error;
     }
   }
 
@@ -727,7 +794,8 @@ export class playwrightUtils {
       console.log(`Got ${pages.length} pages`);
       return pages;
     } catch (error) {
-      this.logAndThrow(error, 'getAllPages');
+      console.error('Error in getAllPages:', error);
+      throw error;
     }
   }
   static async switchToPage(context, index) {
@@ -737,7 +805,8 @@ export class playwrightUtils {
       console.log(`Switched to page at index ${index}`);
       return pages[index];
     } catch (error) {
-      this.logAndThrow(error, `switchToPage(${index})`);
+      console.error(`Error in switchToPage(${index}):`, error);
+      throw error;
     }
   }
 
@@ -748,7 +817,8 @@ export class playwrightUtils {
       console.log('Got accessibility snapshot');
       return snapshot;
     } catch (error) {
-      this.logAndThrow(error, 'getAccessibilitySnapshot');
+      console.error('Error in getAccessibilitySnapshot:', error);
+      throw error;
     }
   }
 
@@ -758,7 +828,8 @@ export class playwrightUtils {
       await pageFixture.getPage().pdf({ path, ...options });
       console.log(`Saved page as PDF to ${path}`);
     } catch (error) {
-      this.logAndThrow(error, `saveAsPDF(${path})`);
+      console.error(`Error in saveAsPDF(${path}):`, error);
+      throw error;
     }
   }
 
@@ -825,7 +896,8 @@ export class playwrightUtils {
       await pageFixture.getPage().waitForSelector(selector, { state: 'visible', timeout });
       console.log(`Element ${selector} is visible`);
     } catch (error) {
-      this.logAndThrow(error, `waitForElementVisible(${selector}, ${timeout})`);
+      console.error(`Error in waitForElementVisible(${selector}, ${timeout}):`, error);
+      throw error;
     }
   }
   static async verifyURL(expectedUrlPattern) {
@@ -838,7 +910,8 @@ export class playwrightUtils {
         throw new Error(`Current URL: ${currentUrl} does not match pattern: ${expectedUrlPattern}`);
       }
     } catch (error) {
-      this.logAndThrow(error, `verifyURL(${expectedUrlPattern})`);
+      console.error(`Error in verifyURL(${expectedUrlPattern}):`, error);
+      throw error;
     }
   }
   static async clickFirstElement(selector) {
@@ -850,7 +923,8 @@ export class playwrightUtils {
       await element.click();
       console.log(`Clicked first element for selector: ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `clickFirstElement(${selector})`);
+      console.error(`Error in clickFirstElement(${selector}):`, error);
+      throw error;
     }
   }
   // Click a single element in all elements matching selector whose text includes expectedText
@@ -871,7 +945,8 @@ export class playwrightUtils {
       }
       throw new Error(`No element with text containing '${expectedText}' found for selector: ${selector}`);
     } catch (error) {
-      this.logAndThrow(error, `clickSingleElementInAllElements(${selector}, ${expectedText})`);
+      console.error(`Error in clickSingleElementInAllElements(${selector}, ${expectedText}):`, error);
+      throw error;
     }
   }
 
@@ -893,20 +968,21 @@ export class playwrightUtils {
       }
       throw new Error(`No element with exact text '${expectedText}' found for selector: ${selector}. Actual: ${JSON.stringify(elements)}`);
     } catch (error) {
-      this.logAndThrow(error, `assertElementInAllElements(${selector}, ${expectedText})`);
+      console.error(`Error in assertElementInAllElements(${selector}, ${expectedText}):`, error);
+      throw error;
     }
   }
 
-  // Robust error logger that always logs to file and console, and flushes output for CI visibility
-  static logAndThrow(error, context) {
-    const message = `[ERROR] ${context}: ${error && error.message ? error.message : error}` + (error && error.stack ? `\n${error.stack}` : '');
-    // Log to file if logger exists
+  // Helper to log Playwright selector errors with more context and suggestions
+  static logSelectorError(error, selector, context) {
+    let message = `[SELECTOR ERROR] ${context}: ${error && error.message ? error.message : error}`;
+    if (typeof selector === 'string' && /[0-9]$/.test(selector)) {
+      message += `\n[HINT] Your selector '${selector}' ends with a number. This is often a mistake (e.g., 'a[href=...']4'). Did you mean to use an index or :nth-child pseudo-class?`;
+    }
     if (this.logger && typeof this.logger.error === 'function') {
       this.logger.error(message);
     }
-    // Always log to console.error for CI visibility
     console.error(message);
-    // Force flush stderr (for Node.js >= v10)
     if (process.stderr && process.stderr.write) {
       process.stderr.write('', () => {});
     }
