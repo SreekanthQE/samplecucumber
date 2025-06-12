@@ -896,4 +896,20 @@ export class playwrightUtils {
       this.logAndThrow(error, `assertElementInAllElements(${selector}, ${expectedText})`);
     }
   }
+
+  // Robust error logger that always logs to file and console, and flushes output for CI visibility
+  static logAndThrow(error, context) {
+    const message = `[ERROR] ${context}: ${error && error.message ? error.message : error}` + (error && error.stack ? `\n${error.stack}` : '');
+    // Log to file if logger exists
+    if (this.logger && typeof this.logger.error === 'function') {
+      this.logger.error(message);
+    }
+    // Always log to console.error for CI visibility
+    console.error(message);
+    // Force flush stderr (for Node.js >= v10)
+    if (process.stderr && process.stderr.write) {
+      process.stderr.write('', () => {});
+    }
+    throw error;
+  }
 }
