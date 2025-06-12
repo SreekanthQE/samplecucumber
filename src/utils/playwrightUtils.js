@@ -75,8 +75,7 @@ export class playwrightUtils {
       }
       throw new Error(`Element not found by selector, text, or role: ${selector}`);
     } catch (error) {
-      console.error(`Failed to click on element ${selector}:`, error);
-      throw error;
+      this.logAndThrow(error, `clickElement(${selector})`);
     }
   }
 
@@ -88,8 +87,7 @@ export class playwrightUtils {
       await pageFixture.getPage().click(selector, clickOptions);
       console.log(`Clicked on element ${selector}`);
     } catch (error) {
-      console.error(`Failed to click on element ${selector}:`, error);
-      throw error;
+      this.logAndThrow(error, `clickBySelector(${selector})`);
     }
   }
 
@@ -100,8 +98,7 @@ export class playwrightUtils {
       await locator.click();
       console.log(`Clicked element by text: ${text}`);
     } catch (error) {
-      console.error(`Failed to click element by text '${text}':`, error);
-      throw error;
+      this.logAndThrow(error, `clickByText(${text})`);
     }
   }
 
@@ -114,8 +111,7 @@ export class playwrightUtils {
       await byRole.click(clickOptions);
       console.log(`Clicked element by role: ${role}`);
     } catch (error) {
-      console.error(`Failed to click element by role '${role}':`, error);
-      throw error;
+      this.logAndThrow(error, `clickByRole(${role})`);
     }
   }
 
@@ -127,8 +123,7 @@ export class playwrightUtils {
       await el.click(clickOptions);
       console.log(`Clicked element by locator: ${locator}`);
     } catch (error) {
-      console.error(`Failed to click element by locator '${locator}':`, error);
-      throw error;
+      this.logAndThrow(error, `clickLocatorByXpathOrCSS(${locator})`);
     }
   }
 
@@ -141,8 +136,7 @@ export class playwrightUtils {
       await el.click(clickOptions);
       console.log(`Clicked element by test id: ${testId}`);
     } catch (error) {
-      console.error(`Failed to click element by test id '${testId}':`, error);
-      throw error;
+      this.logAndThrow(error, `clickByTestId(${testId})`);
     }
   }
 
@@ -155,8 +149,7 @@ export class playwrightUtils {
       await el.click(clickOptions);
       console.log(`Clicked element by label: ${label}`);
     } catch (error) {
-      console.error(`Failed to click element by label '${label}':`, error);
-      throw error;
+      this.logAndThrow(error, `clickByLabel(${label})`);
     }
   }
 
@@ -166,7 +159,6 @@ export class playwrightUtils {
       console.error(msg);
       throw new Error(msg);
     }
-
     try {
       await pageFixture.getPage().waitForSelector(selector, { timeout: 5000 });
       const element = await pageFixture.getPage().$(selector);
@@ -179,16 +171,7 @@ export class playwrightUtils {
       await pageFixture.getPage().fill(selector, value);
       console.log(`✅ Filled input ${selector} with value: ${value}`);
     } catch (error) {
-      console.error(`❌ Failed to fill input ${selector}: ${error.message}`);
-
-      // Attach to Allure if available
-      if (this?.attach) {
-        this.attach(`Error filling input: ${selector}`, 'text/plain');
-        const screenshot = await pageFixture.getPage().screenshot();
-        this.attach(screenshot, 'image/png');
-      }
-
-      throw error;
+      this.logAndThrow(error, `fillInput(${selector}, ${value})`);
     }
   }
 
@@ -204,8 +187,7 @@ export class playwrightUtils {
       await pageFixture.getPage().check(selector);
       console.log(`Checked checkbox ${selector}`);
     } catch (error) {
-      console.error(`Failed to check checkbox ${selector}:`, error);
-      throw error;
+      this.logAndThrow(error, `checkCheckbox(${selector})`);
     }
   }
 
@@ -214,8 +196,7 @@ export class playwrightUtils {
       await pageFixture.getPage().uncheck(selector);
       console.log(`Unchecked checkbox ${selector}`);
     } catch (error) {
-      console.error(`Failed to uncheck checkbox ${selector}:`, error);
-      throw error;
+      this.logAndThrow(error, `uncheckCheckbox(${selector})`);
     }
   }
 
@@ -224,352 +205,561 @@ export class playwrightUtils {
       await pageFixture.getPage().selectOption(selector, value);
       console.log(`Selected option ${value} in ${selector}`);
     } catch (error) {
-      console.error(`Failed to select option ${value} in ${selector}:`, error);
-      throw error;
+      this.logAndThrow(error, `selectOption(${selector}, ${value})`);
     }
   }
 
   // Iframe actions
   static async fillInIframe(frameSelector, inputSelector, value) {
-    const frame = await pageFixture.getPage().frame({ selector: frameSelector });
-    await frame.fill(inputSelector, value);
-    console.log(`Filled iframe ${frameSelector} input ${inputSelector} with value: ${value}`);
+    try {
+      const frame = await pageFixture.getPage().frame({ selector: frameSelector });
+      await frame.fill(inputSelector, value);
+      console.log(`Filled iframe ${frameSelector} input ${inputSelector} with value: ${value}`);
+    } catch (error) {
+      this.logAndThrow(error, `fillInIframe(${frameSelector}, ${inputSelector}, ${value})`);
+    }
   }
 
   static async clickInIframe(frameSelector, elementSelector) {
-    const frame = await pageFixture.getPage().frame({ selector: frameSelector });
-    await frame.click(elementSelector);
-    console.log(`Clicked ${elementSelector} in iframe ${frameSelector}`);
-  }
-
-  // Assertions
-  static async assertElementText(selector, expectedText) {
-    const text = await pageFixture.getPage().textContent(selector);
-    if (text && text.trim() === expectedText.trim()) {
-      expect(text.trim()).toBe(expectedText.trim());
-      console.log(`Element ${selector} has expected text: ${expectedText}`);
-      return;
+    try {
+      const frame = await pageFixture.getPage().frame({ selector: frameSelector });
+      await frame.click(elementSelector);
+      console.log(`Clicked ${elementSelector} in iframe ${frameSelector}`);
+    } catch (error) {
+      this.logAndThrow(error, `clickInIframe(${frameSelector}, ${elementSelector})`);
     }
-    throw new Error(`Expected text "${expectedText}" but found "${text}"`);
   }
 
-  static async assertElementVisible(selector) {
-    const visible = await pageFixture.getPage().isVisible(selector);
-    if (!visible) throw new Error(`Element ${selector} is not visible`);
-    console.log(`Element ${selector} is visible`);
-  }
-
-  static async assertElementChecked(selector) {
-    const checked = await pageFixture.getPage().isChecked(selector);
-    if (!checked) throw new Error(`Element ${selector} is not checked`);
-    console.log(`Element ${selector} is checked`);
-  }
-
-  static async assertElementNotChecked(selector) {
-    const checked = await pageFixture.getPage().isChecked(selector);
-    if (checked) throw new Error(`Element ${selector} is checked but should not be`);
-    console.log(`Element ${selector} is not checked`);
-  }
-
-  // Screenshot
   static async takeScreenshot(path) {
-    await pageFixture.getPage().screenshot({ path });
-    console.log(`Screenshot taken and saved to ${path}`);
+    try {
+      await pageFixture.getPage().screenshot({ path });
+      console.log(`Screenshot taken and saved to ${path}`);
+    } catch (error) {
+      this.logAndThrow(error, `takeScreenshot(${path})`);
+    }
   }
 
   static async screenshotElement(selector, path) {
-    const el = await pageFixture.getPage().$(selector);
-    await el.screenshot({ path });
-    console.log(`Screenshot of ${selector} saved to ${path}`);
+    try {
+      const el = await pageFixture.getPage().$(selector);
+      await el.screenshot({ path });
+      console.log(`Screenshot of ${selector} saved to ${path}`);
+    } catch (error) {
+      this.logAndThrow(error, `screenshotElement(${selector}, ${path})`);
+    }
   }
 
   // Waits
   static async waitForTimeout(ms) {
-    await pageFixture.getPage().waitForTimeout(ms);
-    console.log(`Waited for ${ms} ms`);
+    try {
+      await pageFixture.getPage().waitForTimeout(ms);
+      console.log(`Waited for ${ms} ms`);
+    } catch (error) {
+      this.logAndThrow(error, `waitForTimeout(${ms})`);
+    }
   }
   static async waitForSelector(selector, options) {
-    await pageFixture.getPage().waitForSelector(selector, options);
-    console.log(`Waited for selector ${selector}`);
+    try {
+      await pageFixture.getPage().waitForSelector(selector, options);
+      console.log(`Waited for selector ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `waitForSelector(${selector})`);
+    }
   }
   static async waitForURL(urlOrRegex, options) {
-    await pageFixture.getPage().waitForURL(urlOrRegex, options);
-    console.log(`Waited for URL: ${urlOrRegex}`);
+    try {
+      await pageFixture.getPage().waitForURL(urlOrRegex, options);
+      console.log(`Waited for URL: ${urlOrRegex}`);
+    } catch (error) {
+      this.logAndThrow(error, `waitForURL(${urlOrRegex})`);
+    }
   }
 
   // Keyboard
   static async pressKey(selector, key) {
-    await pageFixture.getPage().press(selector, key);
-    console.log(`Pressed key ${key} on ${selector}`);
+    try {
+      await pageFixture.getPage().press(selector, key);
+      console.log(`Pressed key ${key} on ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `pressKey(${selector}, ${key})`);
+    }
   }
   static async typeText(selector, text, options) {
-    await pageFixture.getPage().type(selector, text, options);
-    console.log(`Typed text '${text}' in ${selector}`);
+    try {
+      await pageFixture.getPage().type(selector, text, options);
+      console.log(`Typed text '${text}' in ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `typeText(${selector}, ${text})`);
+    }
   }
   static async keyboardDown(key) {
-    await pageFixture.getPage().keyboard.down(key);
-    console.log(`Keyboard down: ${key}`);
+    try {
+      await pageFixture.getPage().keyboard.down(key);
+      console.log(`Keyboard down: ${key}`);
+    } catch (error) {
+      this.logAndThrow(error, `keyboardDown(${key})`);
+    }
   }
   static async keyboardUp(key) {
-    await pageFixture.getPage().keyboard.up(key);
-    console.log(`Keyboard up: ${key}`);
+    try {
+      await pageFixture.getPage().keyboard.up(key);
+      console.log(`Keyboard up: ${key}`);
+    } catch (error) {
+      this.logAndThrow(error, `keyboardUp(${key})`);
+    }
   }
 
   // Mouse
   static async mouseMove(x, y) {
-    await pageFixture.getPage().mouse.move(x, y);
-    console.log(`Mouse moved to (${x}, ${y})`);
+    try {
+      await pageFixture.getPage().mouse.move(x, y);
+      console.log(`Mouse moved to (${x}, ${y})`);
+    } catch (error) {
+      this.logAndThrow(error, `mouseMove(${x}, ${y})`);
+    }
   }
   static async mouseClick(x, y, options) {
-    await pageFixture.getPage().mouse.click(x, y, options);
-    console.log(`Mouse clicked at (${x}, ${y})`);
+    try {
+      await pageFixture.getPage().mouse.click(x, y, options);
+      console.log(`Mouse clicked at (${x}, ${y})`);
+    } catch (error) {
+      this.logAndThrow(error, `mouseClick(${x}, ${y})`);
+    }
   }
   static async mouseDown(options) {
-    await pageFixture.getPage().mouse.down(options);
-    console.log('Mouse down');
+    try {
+      await pageFixture.getPage().mouse.down(options);
+      console.log('Mouse down');
+    } catch (error) {
+      this.logAndThrow(error, 'mouseDown');
+    }
   }
   static async mouseUp(options) {
-    await pageFixture.getPage().mouse.up(options);
-    console.log('Mouse up');
+    try {
+      await pageFixture.getPage().mouse.up(options);
+      console.log('Mouse up');
+    } catch (error) {
+      this.logAndThrow(error, 'mouseUp');
+    }
   }
 
   // File upload/download
   static async setInputFiles(selector, files) {
-    await pageFixture.getPage().setInputFiles(selector, files);
-    console.log(`Set input files for ${selector}`);
+    try {
+      await pageFixture.getPage().setInputFiles(selector, files);
+      console.log(`Set input files for ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `setInputFiles(${selector}, ${files})`);
+    }
   }
   static async waitForDownload(callback) {
-    const [download] = await Promise.all([
-      pageFixture.getPage().waitForEvent('download'),
-      callback()
-    ]);
-    console.log('Download started');
-    return download;
+    try {
+      const [download] = await Promise.all([
+        pageFixture.getPage().waitForEvent('download'),
+        callback()
+      ]);
+      console.log('Download started');
+      return download;
+    } catch (error) {
+      this.logAndThrow(error, 'waitForDownload');
+    }
   }
 
   // Dialogs
   static async handleDialog(action = 'accept', promptText = '') {
-    pageFixture.getPage().once('dialog', async dialog => {
-      if (action === 'accept') await dialog.accept(promptText);
-      else await dialog.dismiss();
-      console.log(`Dialog ${action}ed`);
-    });
+    try {
+      pageFixture.getPage().once('dialog', async dialog => {
+        if (action === 'accept') await dialog.accept(promptText);
+        else await dialog.dismiss();
+        console.log(`Dialog ${action}ed`);
+      });
+    } catch (error) {
+      this.logAndThrow(error, `handleDialog(${action}, ${promptText})`);
+    }
   }
 
   // Cookies & Storage
   static async getCookies() {
-    const cookies = await pageFixture.getPage().context().cookies();
-    console.log('Got cookies');
-    return cookies;
+    try {
+      const cookies = await pageFixture.getPage().context().cookies();
+      console.log('Got cookies');
+      return cookies;
+    } catch (error) {
+      this.logAndThrow(error, 'getCookies');
+    }
   }
   static async setCookies(cookies) {
-    await pageFixture.getPage().context().addCookies(cookies);
-    console.log('Set cookies');
+    try {
+      await pageFixture.getPage().context().addCookies(cookies);
+      console.log('Set cookies');
+    } catch (error) {
+      this.logAndThrow(error, 'setCookies');
+    }
   }
   static async clearCookies() {
-    await pageFixture.getPage().context().clearCookies();
-    console.log('Cleared cookies');
+    try {
+      await pageFixture.getPage().context().clearCookies();
+      console.log('Cleared cookies');
+    } catch (error) {
+      this.logAndThrow(error, 'clearCookies');
+    }
   }
   static async getLocalStorage() {
-    const data = await pageFixture.getPage().evaluate(() => ({ ...localStorage }));
-    console.log('Got localStorage');
-    return data;
+    try {
+      const data = await pageFixture.getPage().evaluate(() => ({ ...localStorage }));
+      console.log('Got localStorage');
+      return data;
+    } catch (error) {
+      this.logAndThrow(error, 'getLocalStorage');
+    }
   }
   static async setLocalStorage(key, value) {
-    await pageFixture.getPage().evaluate(([k, v]) => localStorage.setItem(k, v), [key, value]);
-    console.log(`Set localStorage ${key}`);
+    try {
+      await pageFixture.getPage().evaluate(([k, v]) => localStorage.setItem(k, v), [key, value]);
+      console.log(`Set localStorage ${key}`);
+    } catch (error) {
+      this.logAndThrow(error, `setLocalStorage(${key}, ${value})`);
+    }
   }
   static async clearLocalStorage() {
-    await pageFixture.getPage().evaluate(() => localStorage.clear());
-    console.log('Cleared localStorage');
+    try {
+      await pageFixture.getPage().evaluate(() => localStorage.clear());
+      console.log('Cleared localStorage');
+    } catch (error) {
+      this.logAndThrow(error, 'clearLocalStorage');
+    }
   }
   static async getSessionStorage() {
-    const data = await pageFixture.getPage().evaluate(() => ({ ...sessionStorage }));
-    console.log('Got sessionStorage');
-    return data;
+    try {
+      const data = await pageFixture.getPage().evaluate(() => ({ ...sessionStorage }));
+      console.log('Got sessionStorage');
+      return data;
+    } catch (error) {
+      this.logAndThrow(error, 'getSessionStorage');
+    }
   }
   static async setSessionStorage(key, value) {
-    await pageFixture.getPage().evaluate(([k, v]) => sessionStorage.setItem(k, v), [key, value]);
-    console.log(`Set sessionStorage ${key}`);
+    try {
+      await pageFixture.getPage().evaluate(([k, v]) => sessionStorage.setItem(k, v), [key, value]);
+      console.log(`Set sessionStorage ${key}`);
+    } catch (error) {
+      this.logAndThrow(error, `setSessionStorage(${key}, ${value})`);
+    }
   }
   static async clearSessionStorage() {
-    await pageFixture.getPage().evaluate(() => sessionStorage.clear());
-    console.log('Cleared sessionStorage');
+    try {
+      await pageFixture.getPage().evaluate(() => sessionStorage.clear());
+      console.log('Cleared sessionStorage');
+    } catch (error) {
+      this.logAndThrow(error, 'clearSessionStorage');
+    }
   }
 
   // Element state
   static async isEnabled(selector) {
-    const enabled = await pageFixture.getPage().isEnabled(selector);
-    console.log(`Element ${selector} enabled: ${enabled}`);
-    return enabled;
+    try {
+      const enabled = await pageFixture.getPage().isEnabled(selector);
+      console.log(`Element ${selector} enabled: ${enabled}`);
+      return enabled;
+    } catch (error) {
+      this.logAndThrow(error, `isEnabled(${selector})`);
+    }
   }
   static async isDisabled(selector) {
-    const disabled = await pageFixture.getPage().isDisabled(selector);
-    console.log(`Element ${selector} disabled: ${disabled}`);
-    return disabled;
+    try {
+      const disabled = await pageFixture.getPage().isDisabled(selector);
+      console.log(`Element ${selector} disabled: ${disabled}`);
+      return disabled;
+    } catch (error) {
+      this.logAndThrow(error, `isDisabled(${selector})`);
+    }
   }
   static async isEditable(selector) {
-    const editable = await pageFixture.getPage().isEditable(selector);
-    console.log(`Element ${selector} editable: ${editable}`);
-    return editable;
+    try {
+      const editable = await pageFixture.getPage().isEditable(selector);
+      console.log(`Element ${selector} editable: ${editable}`);
+      return editable;
+    } catch (error) {
+      this.logAndThrow(error, `isEditable(${selector})`);
+    }
   }
   static async isHidden(selector) {
-    const hidden = await pageFixture.getPage().isHidden(selector);
-    console.log(`Element ${selector} hidden: ${hidden}`);
-    return hidden;
+    try {
+      const hidden = await pageFixture.getPage().isHidden(selector);
+      console.log(`Element ${selector} hidden: ${hidden}`);
+      return hidden;
+    } catch (error) {
+      this.logAndThrow(error, `isHidden(${selector})`);
+    }
   }
 
   // Attribute & property
   static async getAttribute(selector, attr) {
-    const value = await pageFixture.getPage().getAttribute(selector, attr);
-    console.log(`Got attribute ${attr} from ${selector}: ${value}`);
-    return value;
+    try {
+      const value = await pageFixture.getPage().getAttribute(selector, attr);
+      console.log(`Got attribute ${attr} from ${selector}: ${value}`);
+      return value;
+    } catch (error) {
+      this.logAndThrow(error, `getAttribute(${selector}, ${attr})`);
+    }
   }
   static async getProperty(selector, prop) {
-    const value = await pageFixture.getPage().$eval(selector, (el, p) => el[p], prop);
-    console.log(`Got property ${prop} from ${selector}: ${value}`);
-    return value;
+    try {
+      const value = await pageFixture.getPage().$eval(selector, (el, p) => el[p], prop);
+      console.log(`Got property ${prop} from ${selector}: ${value}`);
+      return value;
+    } catch (error) {
+      this.logAndThrow(error, `getProperty(${selector}, ${prop})`);
+    }
   }
 
   // Focus/blur
   static async focus(selector) {
-    await pageFixture.getPage().focus(selector);
-    console.log(`Focused on ${selector}`);
+    try {
+      await pageFixture.getPage().focus(selector);
+      console.log(`Focused on ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `focus(${selector})`);
+    }
   }
   static async blur(selector) {
-    await pageFixture.getPage().$eval(selector, el => el.blur());
-    console.log(`Blurred ${selector}`);
+    try {
+      await pageFixture.getPage().$eval(selector, el => el.blur());
+      console.log(`Blurred ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `blur(${selector})`);
+    }
   }
 
   // Scroll
   static async scrollTo(selector) {
-    await pageFixture.getPage().$eval(selector, el => el.scrollIntoView());
-    console.log(`Scrolled to ${selector}`);
+    try {
+      await pageFixture.getPage().$eval(selector, el => el.scrollIntoView());
+      console.log(`Scrolled to ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `scrollTo(${selector})`);
+    }
   }
   static async scrollBy(x, y) {
-    await pageFixture.getPage().evaluate(([dx, dy]) => window.scrollBy(dx, dy), [x, y]);
-    console.log(`Scrolled by (${x}, ${y})`);
+    try {
+      await pageFixture.getPage().evaluate(([dx, dy]) => window.scrollBy(dx, dy), [x, y]);
+      console.log(`Scrolled by (${x}, ${y})`);
+    } catch (error) {
+      this.logAndThrow(error, `scrollBy(${x}, ${y})`);
+    }
   }
 
   // Misc
   static async getTitle() {
-    const title = await pageFixture.getPage().title();
-    console.log(`Page title: ${title}`);
-    return title;
+    try {
+      const title = await pageFixture.getPage().title();
+      console.log(`Page title: ${title}`);
+      return title;
+    } catch (error) {
+      this.logAndThrow(error, 'getTitle');
+    }
   }
   static async getURL() {
-    const url = pageFixture.getPage().url();
-    console.log(`Page URL: ${url}`);
-    return url;
+    try {
+      const url = pageFixture.getPage().url();
+      console.log(`Page URL: ${url}`);
+      return url;
+    } catch (error) {
+      this.logAndThrow(error, 'getURL');
+    }
   }
   static async getText(selector) {
-    const text = await pageFixture.getPage().textContent(selector);
-    console.log(`Got text from ${selector}: ${text}`);
-    return text;
+    try {
+      const text = await pageFixture.getPage().textContent(selector);
+      console.log(`Got text from ${selector}: ${text}`);
+      return text;
+    } catch (error) {
+      this.logAndThrow(error, `getText(${selector})`);
+    }
   }
   static async getInnerHTML(selector) {
-    const html = await pageFixture.getPage().innerHTML(selector);
-    console.log(`Got innerHTML from ${selector}`);
-    return html;
+    try {
+      const html = await pageFixture.getPage().innerHTML(selector);
+      console.log(`Got innerHTML from ${selector}`);
+      return html;
+    } catch (error) {
+      this.logAndThrow(error, `getInnerHTML(${selector})`);
+    }
   }
   static async getOuterHTML(selector) {
-    const html = await pageFixture.getPage().evaluate(sel => document.querySelector(sel).outerHTML, selector);
-    console.log(`Got outerHTML from ${selector}`);
-    return html;
+    try {
+      const html = await pageFixture.getPage().evaluate(sel => document.querySelector(sel).outerHTML, selector);
+      console.log(`Got outerHTML from ${selector}`);
+      return html;
+    } catch (error) {
+      this.logAndThrow(error, `getOuterHTML(${selector})`);
+    }
   }
   static async countElements(selector) {
-    const count = await pageFixture.getPage().$$eval(selector, els => els.length);
-    console.log(`Counted ${count} elements for ${selector}`);
-    return count;
+    try {
+      const count = await pageFixture.getPage().$$eval(selector, els => els.length);
+      console.log(`Counted ${count} elements for ${selector}`);
+      return count;
+    } catch (error) {
+      this.logAndThrow(error, `countElements(${selector})`);
+    }
   }
   static async isChecked(selector) {
-    const checked = await pageFixture.getPage().isChecked(selector);
-    console.log(`Element ${selector} checked: ${checked}`);
-    return checked;
+    try {
+      const checked = await pageFixture.getPage().isChecked(selector);
+      console.log(`Element ${selector} checked: ${checked}`);
+      return checked;
+    } catch (error) {
+      this.logAndThrow(error, `isChecked(${selector})`);
+    }
   }
   static async isVisible(selector) {
-    const visible = await pageFixture.getPage().isVisible(selector);
-    console.log(`Element ${selector} visible: ${visible}`);
-    return visible;
+    try {
+      const visible = await pageFixture.getPage().isVisible(selector);
+      console.log(`Element ${selector} visible: ${visible}`);
+      return visible;
+    } catch (error) {
+      this.logAndThrow(error, `isVisible(${selector})`);
+    }
   }
   static async isHiddenElement(selector) {
-    const hidden = await pageFixture.getPage().isHidden(selector);
-    console.log(`Element ${selector} hidden: ${hidden}`);
-    return hidden;
+    try {
+      const hidden = await pageFixture.getPage().isHidden(selector);
+      console.log(`Element ${selector} hidden: ${hidden}`);
+      return hidden;
+    } catch (error) {
+      this.logAndThrow(error, `isHiddenElement(${selector})`);
+    }
   }
   static async dragAndDrop(source, target) {
-    await pageFixture.getPage().dragAndDrop(source, target);
-    console.log(`Dragged ${source} to ${target}`);
+    try {
+      await pageFixture.getPage().dragAndDrop(source, target);
+      console.log(`Dragged ${source} to ${target}`);
+    } catch (error) {
+      this.logAndThrow(error, `dragAndDrop(${source}, ${target})`);
+    }
   }
   static async doubleClick(selector) {
-    await pageFixture.getPage().dblclick(selector);
-    console.log(`Double clicked ${selector}`);
+    try {
+      await pageFixture.getPage().dblclick(selector);
+      console.log(`Double clicked ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `doubleClick(${selector})`);
+    }
   }
   static async rightClick(selector) {
-    await pageFixture.getPage().click(selector, { button: 'right' });
-    console.log(`Right clicked ${selector}`);
+    try {
+      await pageFixture.getPage().click(selector, { button: 'right' });
+      console.log(`Right clicked ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `rightClick(${selector})`);
+    }
   }
   static async hover(selector) {
-    await pageFixture.getPage().hover(selector);
-    console.log(`Hovered over ${selector}`);
+    try {
+      await pageFixture.getPage().hover(selector);
+      console.log(`Hovered over ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `hover(${selector})`);
+    }
   }
 
   // Network interception/mocking
   static async interceptRequest(url, handler) {
-    await pageFixture.getPage().route(url, handler);
-    console.log(`Intercepted requests to ${url}`);
+    try {
+      await pageFixture.getPage().route(url, handler);
+      console.log(`Intercepted requests to ${url}`);
+    } catch (error) {
+      this.logAndThrow(error, `interceptRequest(${url})`);
+    }
   }
   static async removeRequestInterception(url) {
-    await pageFixture.getPage().unroute(url);
-    console.log(`Removed interception for ${url}`);
+    try {
+      await pageFixture.getPage().unroute(url);
+      console.log(`Removed interception for ${url}`);
+    } catch (error) {
+      this.logAndThrow(error, `removeRequestInterception(${url})`);
+    }
   }
 
   // Device/viewport emulation
   static async setViewportSize(width, height) {
-    await pageFixture.getPage().setViewportSize({ width, height });
-    console.log(`Set viewport size to ${width}x${height}`);
+    try {
+      await pageFixture.getPage().setViewportSize({ width, height });
+      console.log(`Set viewport size to ${width}x${height}`);
+    } catch (error) {
+      this.logAndThrow(error, `setViewportSize(${width}, ${height})`);
+    }
   }
   static async emulateDevice(device) {
-    const { devices } = require('playwright');
-    await pageFixture.getPage().context().newPage(devices[device]);
-    console.log(`Emulated device: ${device}`);
+    try {
+      const { devices } = require('playwright');
+      await pageFixture.getPage().context().newPage(devices[device]);
+      console.log(`Emulated device: ${device}`);
+    } catch (error) {
+      this.logAndThrow(error, `emulateDevice(${device})`);
+    }
   }
 
   // Browser context management
   static async newContext(browser, options) {
-    const context = await browser.newContext(options);
-    console.log('Created new browser context');
-    return context;
+    try {
+      const context = await browser.newContext(options);
+      console.log('Created new browser context');
+      return context;
+    } catch (error) {
+      this.logAndThrow(error, 'newContext');
+    }
   }
   static async closeContext(context) {
-    await context.close();
-    console.log('Closed browser context');
+    try {
+      await context.close();
+      console.log('Closed browser context');
+    } catch (error) {
+      this.logAndThrow(error, 'closeContext');
+    }
   }
 
   // Multiple tab/window handling
   static async getAllPages(context) {
-    const pages = context.pages();
-    console.log(`Got ${pages.length} pages`);
-    return pages;
+    try {
+      const pages = context.pages();
+      console.log(`Got ${pages.length} pages`);
+      return pages;
+    } catch (error) {
+      this.logAndThrow(error, 'getAllPages');
+    }
   }
   static async switchToPage(context, index) {
-    const pages = context.pages();
-    if (index < 0 || index >= pages.length) throw new Error('Invalid page index');
-    console.log(`Switched to page at index ${index}`);
-    return pages[index];
+    try {
+      const pages = context.pages();
+      if (index < 0 || index >= pages.length) throw new Error('Invalid page index');
+      console.log(`Switched to page at index ${index}`);
+      return pages[index];
+    } catch (error) {
+      this.logAndThrow(error, `switchToPage(${index})`);
+    }
   }
 
   // Accessibility
   static async getAccessibilitySnapshot(options) {
-    const snapshot = await pageFixture.getPage().accessibility.snapshot(options);
-    console.log('Got accessibility snapshot');
-    return snapshot;
+    try {
+      const snapshot = await pageFixture.getPage().accessibility.snapshot(options);
+      console.log('Got accessibility snapshot');
+      return snapshot;
+    } catch (error) {
+      this.logAndThrow(error, 'getAccessibilitySnapshot');
+    }
   }
 
   // PDF generation
   static async saveAsPDF(path, options) {
-    await pageFixture.getPage().pdf({ path, ...options });
-    console.log(`Saved page as PDF to ${path}`);
+    try {
+      await pageFixture.getPage().pdf({ path, ...options });
+      console.log(`Saved page as PDF to ${path}`);
+    } catch (error) {
+      this.logAndThrow(error, `saveAsPDF(${path})`);
+    }
   }
 
   // Custom wait conditions
@@ -635,61 +825,75 @@ export class playwrightUtils {
       await pageFixture.getPage().waitForSelector(selector, { state: 'visible', timeout });
       console.log(`Element ${selector} is visible`);
     } catch (error) {
-      console.error(`Element ${selector} not visible within ${timeout}ms:`, error);
-      throw error;
+      this.logAndThrow(error, `waitForElementVisible(${selector}, ${timeout})`);
     }
   }
   static async verifyURL(expectedUrlPattern) {
-  const currentUrl = pageFixture.getPage().url();
-  const regex = new RegExp(expectedUrlPattern);
-  if (regex.test(currentUrl)) {
-    console.log(`Verified URL: ${currentUrl} matches pattern: ${expectedUrlPattern}`);
-  } else {
-    console.error(`Current URL: ${currentUrl} does not match pattern: ${expectedUrlPattern}`);
-    throw new Error("Current URL does not match expected pattern");
-  }
-  }
-  static async clickFirstElement(selector){
-    const element = await pageFixture.getPage().locator(selector).first();
-    if (!element){
-      throw new Error("No elements found for selector: " + selector);
+  try {
+      const currentUrl = pageFixture.getPage().url();
+      const regex = new RegExp(expectedUrlPattern);
+      if (regex.test(currentUrl)) {
+        console.log(`Verified URL: ${currentUrl} matches pattern: ${expectedUrlPattern}`);
+      } else {
+        throw new Error(`Current URL: ${currentUrl} does not match pattern: ${expectedUrlPattern}`);
+      }
+    } catch (error) {
+      this.logAndThrow(error, `verifyURL(${expectedUrlPattern})`);
     }
-    await element.click();
-    console.log(`Clicked first element for selector: ${selector}`);
+  }
+  static async clickFirstElement(selector) {
+    try {
+      const element = await pageFixture.getPage().locator(selector).first();
+      if (!element) {
+        throw new Error("No elements found for selector: " + selector);
+      }
+      await element.click();
+      console.log(`Clicked first element for selector: ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `clickFirstElement(${selector})`);
+    }
   }
   // Click a single element in all elements matching selector whose text includes expectedText
   static async clickSingleElementInAllElements(selector, expectedText) {
-    const page = pageFixture.getPage();
-    const elements = await page.locator(selector).all();
-    if (!elements.length) {
-      throw new Error(`No elements found for selector: ${selector}`);
-    }
-    for (const ele of elements) {
-      const text = (await ele.textContent() || '').trim();
-      if (text.includes(expectedText)) {
-        await ele.click();
-        console.log(`Clicked element with text containing: ${expectedText}`);
-        return;
+    try {
+      const page = pageFixture.getPage();
+      const elements = await page.locator(selector).all();
+      if (!elements.length) {
+        throw new Error(`No elements found for selector: ${selector}`);
       }
+      for (const ele of elements) {
+        const text = (await ele.textContent() || '').trim();
+        if (text.includes(expectedText)) {
+          await ele.click();
+          console.log(`Clicked element with text containing: ${expectedText}`);
+          return;
+        }
+      }
+      throw new Error(`No element with text containing '${expectedText}' found for selector: ${selector}`);
+    } catch (error) {
+      this.logAndThrow(error, `clickSingleElementInAllElements(${selector}, ${expectedText})`);
     }
-    throw new Error(`No element with text containing '${expectedText}' found for selector: ${selector}`);
   }
 
   // Assert that at least one element matching selector has text exactly equal to expectedText
   static async assertElementInAllElements(selector, expectedText) {
-    const page = pageFixture.getPage();
-    const elements = await page.locator(selector).allTextContents();
-    if (!elements.length) {
-      throw new Error(`No elements found for selector: ${selector}`);
-    }
-    for (const text of elements) {
-      const trimmed = (text || '').trim();
-      if (trimmed === expectedText.trim()) {
-        expect(trimmed).toBe(expectedText.trim());
-        console.log(`[ASSERT] Element with text '${expectedText}' found for selector: ${selector}`);
-        return;
+    try {
+      const page = pageFixture.getPage();
+      const elements = await page.locator(selector).allTextContents();
+      if (!elements.length) {
+        throw new Error(`No elements found for selector: ${selector}`);
       }
+      for (const text of elements) {
+        const trimmed = (text || '').trim();
+        if (trimmed === expectedText.trim()) {
+          expect(trimmed).toBe(expectedText.trim());
+          console.log(`[ASSERT] Element with text '${expectedText}' found for selector: ${selector}`);
+          return;
+        }
+      }
+      throw new Error(`No element with exact text '${expectedText}' found for selector: ${selector}. Actual: ${JSON.stringify(elements)}`);
+    } catch (error) {
+      this.logAndThrow(error, `assertElementInAllElements(${selector}, ${expectedText})`);
     }
-    throw new Error(`No element with exact text '${expectedText}' found for selector: ${selector}. Actual: ${JSON.stringify(elements)}`);
   }
 }
