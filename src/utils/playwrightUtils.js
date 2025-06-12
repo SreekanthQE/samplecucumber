@@ -245,10 +245,12 @@ export class playwrightUtils {
   // Assertions
   static async assertElementText(selector, expectedText) {
     const text = await pageFixture.getPage().textContent(selector);
-    if (text !== expectedText) {
-      throw new Error(`Expected text "${expectedText}" but found "${text}"`);
+    if (text && text.trim() === expectedText.trim()) {
+      expect(text.trim()).toBe(expectedText.trim());
+      console.log(`Element ${selector} has expected text: ${expectedText}`);
+      return;
     }
-    console.log(`Element ${selector} has expected text: ${expectedText}`);
+    throw new Error(`Expected text "${expectedText}" but found "${text}"`);
   }
 
   static async assertElementVisible(selector) {
@@ -654,5 +656,40 @@ export class playwrightUtils {
     }
     await element.click();
     console.log(`Clicked first element for selector: ${selector}`);
+  }
+  // Click a single element in all elements matching selector whose text includes expectedText
+  static async clickSingleElementInAllElements(selector, expectedText) {
+    const page = pageFixture.getPage();
+    const elements = await page.locator(selector).all();
+    if (!elements.length) {
+      throw new Error(`No elements found for selector: ${selector}`);
+    }
+    for (const ele of elements) {
+      const text = (await ele.textContent() || '').trim();
+      if (text.includes(expectedText)) {
+        await ele.click();
+        console.log(`Clicked element with text containing: ${expectedText}`);
+        return;
+      }
+    }
+    throw new Error(`No element with text containing '${expectedText}' found for selector: ${selector}`);
+  }
+
+  // Assert that at least one element matching selector has text exactly equal to expectedText
+  static async assertElementInAllElements(selector, expectedText) {
+    const page = pageFixture.getPage();
+    const elements = await page.locator(selector).allTextContents();
+    if (!elements.length) {
+      throw new Error(`No elements found for selector: ${selector}`);
+    }
+    for (const text of elements) {
+      const trimmed = (text || '').trim();
+      if (trimmed === expectedText.trim()) {
+        expect(trimmed).toBe(expectedText.trim());
+        console.log(`[ASSERT] Element with text '${expectedText}' found for selector: ${selector}`);
+        return;
+      }
+    }
+    throw new Error(`No element with exact text '${expectedText}' found for selector: ${selector}. Actual: ${JSON.stringify(elements)}`);
   }
 }
