@@ -30,8 +30,8 @@ Then('verify the user logsoff successfully', async function(){
   await homePage.verifyURL('account/logout');
 })
 
-When('the user clicks on the signup or login button', async function(){
-  await homePage.clickSignUporLoginButton();
+When('the user clicks on the {string} submenu', async function(menuText){
+  await homePage.userClicksOnSubMenu(menuText);
     
 })
 Then('the user creates a new account with valid details', async function(){
@@ -49,4 +49,15 @@ Then('the user should be redirected to the home page', async function(){
 Then ('the user should be redirected to the login page', async function(){
   await loginPage.userShouldBeRedirectedToLoginPage();
   
+})
+
+When('the user enter existing new user signup name and email', async function(){
+  await loginPage.enterExistingUserSignUpDetailsAndSubmitIt();
+})
+When('verify the user is able to see {string}', async function(userSignUpText){
+  await loginPage.verifyUserIsAbleToSeeSignUpText(userSignUpText);
+})
+
+Then('verify the user should see {string}', async function(emailExistingUserSignUpText){
+  await loginPage.verifyUserShouldSeeEmailExistsText(emailExistingUserSignUpText);
 })

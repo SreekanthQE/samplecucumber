@@ -6,10 +6,8 @@ export class HomePage {
     async userNavigateToApplicationURL(){
         await pw.navigateTo(process.env.BASE_URL);
     }
-    async clickSignUporLoginButton(){
-            await pw.clickSingleElementInAllElements(LoginPageLocators.HomePageAllMenus, 'Signup / Login');
-       
-        await pw.verifyURL('/login');
+    async userClicksOnSubMenu(menuText){
+         await pw.clickSingleElementInAllElements(LoginPageLocators.HomePageAllMenus, menuText);
     }
     async userLandsOnApplicationHomePage(){
          await pw.verifyURL('account/account');

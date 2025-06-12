@@ -99,7 +99,7 @@ export class LoginPage {
         await pw.assertElementVisible(LoginPageLocators.LoginPageContinueBtn);
     }
     async enterValidLoginEmailAddress(){
-        await pw.fillInput(LoginPageLocators.LoginAccountEmailAddress, process.env.APP_LOGIN_USERNAME);
+        await pw.fillInput(LoginPageLocators.LoginAccountEmailAddress, process.env.APP_LOGIN_EMAIL);
     }
     async fillValidLoginPassword(){
         await pw.fillInput(LoginPageLocators.LoginAccountPassword, process.env.APP_PASSWORD);
@@ -116,5 +116,20 @@ export class LoginPage {
         await pw.verifyURL('/login');
         await pw.assertElementInAllElements(LoginPageLocators.HomePageAllMenus, 'Signup / Login');
     }
-    
+    async enterExistingUserSignUpDetailsAndSubmitIt(){
+        await pw.fillInput(LoginPageLocators.LoginPageExistingUserSignUpName, process.env.APP_USERNAME);
+        await pw.fillInput(LoginPageLocators.LoginPageExistingUserSignUpEmail, process.env.APP_LOGIN_EMAIL);
+        await this.ClickExistingUserSignUpButton();
+    }
+    async verifyUserIsAbleToSeeSignUpText(userSignUpText){
+        await pw.assertElementVisible(LoginPageLocators.LoginPageNewSignUpText);
+        await pw.assertElementText(LoginPageLocators.LoginPageNewSignUpText, userSignUpText);
+    }
+    async ClickExistingUserSignUpButton(){
+        await pw.clickBySelector(LoginPageLocators.LoginPageExistingUserSignupBtn);
+    }
+    async verifyUserShouldSeeEmailExistsText(emailExistingUserSignUpText){
+        await pw.assertElementTextByText('Email Address already exist!', 'Email Address already exist!');
+    }
+
 }

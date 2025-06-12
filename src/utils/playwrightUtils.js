@@ -938,7 +938,7 @@ export class playwrightUtils {
       for (const ele of elements) {
         const text = (await ele.textContent() || '').trim();
         if (text.includes(expectedText)) {
-          await ele.click();
+          await ele.first().click();
           console.log(`Clicked element with text containing: ${expectedText}`);
           return;
         }
@@ -1000,19 +1000,23 @@ export class playwrightUtils {
     }
   }
 
-  // Helper to log Playwright selector errors with more context and suggestions
-  static logSelectorError(error, selector, context) {
-    let message = `[SELECTOR ERROR] ${context}: ${error && error.message ? error.message : error}`;
-    if (typeof selector === 'string' && /[0-9]$/.test(selector)) {
-      message += `\n[HINT] Your selector '${selector}' ends with a number. This is often a mistake (e.g., 'a[href=...']4'). Did you mean to use an index or :nth-child pseudo-class?`;
+  static async assertElementTextByText(selectorText, expectedText) {
+  try {
+    const selector = pageFixture.getPage().getByText(selectorText);
+    await selector.waitFor({ state: 'visible', timeout: 5000 });
+    const text = await selector.textContent();
+    if (!text) {
+      throw new Error(`Element with text '${selectorText}' found, but no text content`);
     }
-    if (this.logger && typeof this.logger.error === 'function') {
-      this.logger.error(message);
+    const actualText = text.trim();
+    const expected = expectedText.trim();
+    if (actualText !== expected) {
+      throw new Error(`Expected text "${expected}" but found "${actualText}"`);
     }
-    console.error(message);
-    if (process.stderr && process.stderr.write) {
-      process.stderr.write('', () => {});
-    }
-    throw error;
+    console.log(`✅ Element with text '${selectorText}' has expected text: "${expected}"`);
+  } catch (error) {
+    throw new Error(`❌ assertElementTextByText("${selectorText}", "${expectedText}") failed: ${error.message}`);
   }
+  }
+
 }

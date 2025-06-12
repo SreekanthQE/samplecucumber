@@ -28,5 +28,9 @@ export const LoginPageLocators = {
   LoginAccountPassword: "input[name='password']",
   LoginAccountLoginBtn: "button[data-qa='login-button']",
   LoginPageLogOutBtn: "a[href='/logout']",
-  LoginPageDeleteAccountBtn: "a[href='/delete_account']"
+  LoginPageDeleteAccountBtn: "a[href='/delete_account']",
+  LoginPageNewSignUpText: 'div.signup-form h2',
+  LoginPageExistingUserSignUpName: "input[placeholder='Name']",
+  LoginPageExistingUserSignUpEmail: "//div[@class='signup-form']//following::input[@placeholder='Email Address']",
+  LoginPageExistingUserSignupBtn: "button[data-qa='signup-button']"
 };
