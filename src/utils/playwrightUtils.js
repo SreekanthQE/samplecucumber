@@ -973,6 +973,33 @@ export class playwrightUtils {
     }
   }
 
+  // Assertions
+  static async assertElementVisible(selector) {
+    try {
+      const visible = await pageFixture.getPage().isVisible(selector);
+      if (!visible) throw new Error(`Element ${selector} is not visible`);
+      console.log(`Element ${selector} is visible`);
+    } catch (error) {
+      console.error(`Error in assertElementVisible(${selector}):`, error);
+      throw error;
+    }
+  }
+
+  static async assertElementText(selector, expectedText) {
+    try {
+      const text = await pageFixture.getPage().textContent(selector);
+      if (text && text.trim() === expectedText.trim()) {
+        expect(text.trim()).toBe(expectedText.trim());
+        console.log(`Element ${selector} has expected text: ${expectedText}`);
+        return;
+      }
+      throw new Error(`Expected text "${expectedText}" but found "${text}"`);
+    } catch (error) {
+      console.error(`Error in assertElementText(${selector}, ${expectedText}):`, error);
+      throw error;
+    }
+  }
+
   // Helper to log Playwright selector errors with more context and suggestions
   static logSelectorError(error, selector, context) {
     let message = `[SELECTOR ERROR] ${context}: ${error && error.message ? error.message : error}`;

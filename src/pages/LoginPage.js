@@ -94,7 +94,7 @@ export class LoginPage {
         await pw.clickByText(LoginPageLocators.LoginPageCreateAccountText);
         await pw.assertElementVisible(LoginPageLocators.LoginPageAccountCreatedText);
         await pw.assertElementText(LoginPageLocators.LoginPageAccountCreatedText, 'Account Created!');
-        await pw.assertElementText(LoginPageLocators.LoginPageAccountCongratsMessage, 'Congratulations! Your new account has been successfully created!')
+        await pw.assertElementText(LoginPageLocators.LoginPageAccountCongratsMessage, 'Congratulations! Your new account has been successfully created!');
         await pw.assertElementText(LoginPageLocators.LoginPageAccountAdditionalInfo, 'You can now take advantage of member privileges to enhance your online shopping experience with us.');
         await pw.assertElementVisible(LoginPageLocators.LoginPageContinueBtn);
     }
