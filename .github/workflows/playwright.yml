@@ -89,18 +89,21 @@ jobs:
       - name: List allure-results contents
         run: ls -l allure-results || echo "allure-results folder does not exist"
 
-      - name: Generate Allure report
+      - name: Always generate Allure and HTML reports
+        if: always()
         run: |
           npm install -g allure-commandline --no-save
           allure generate allure-results --clean -o allure-report
-
-      - name: Upload Allure Report as Artifact
+          ls -l allure-report || echo "allure-report folder does not exist"
+          ls -l reports || echo "reports folder does not exist"
+      - name: Always upload Allure Report as Artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: ./allure-report
-
-      - name: Upload HTML Report as Artifact
+      - name: Always upload HTML Report as Artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: html-report
