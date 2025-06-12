@@ -27,6 +27,6 @@ export const LoginPageLocators = {
   LoginAccountEmailAddress: "input[data-qa='login-email']",
   LoginAccountPassword: "input[name='password']",
   LoginAccountLoginBtn: "button[data-qa='login-button']",
-  LoginPageLogOutBtn: "a[href='/logout']",
+  LoginPageLogOutBtn: "a[href='/logout']4",
   LoginPageDeleteAccountBtn: "a[href='/delete_account']"
 };
