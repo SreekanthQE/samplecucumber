@@ -25,7 +25,6 @@ Feature: Login Functionality
     @smoke @regression @sample1 @verifyRegisterWithExistingEmail
     Scenario: Verify user is not able to register with existing email and password
        When the user clicks on the "Signup / Login" submenu
-       Then verify the user should see 'Email Address already exist!'
        Then verify the user is able to see 'New User Signup!'
        When the user enter existing new user signup name and email 
        Then verify the user should see 'Email Address already exist!'    

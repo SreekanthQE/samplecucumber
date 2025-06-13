@@ -5,9 +5,6 @@ const binDir = path.resolve('.', '../../bin');
 import { pages } from '../pages/Pages.js';
 
 
-
-
-
 When('the user clicks on the logout button', async function(){
   await pages.loginPage.userClicksOnLogoutButton();
   
