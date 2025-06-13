@@ -17,13 +17,16 @@ on:
         required: false
         type: choice
         options:
+          - '@*'
           - '@smoke'
           - '@regression'
           - '@sanity'
-          - '@sample'
           - '@verifylogin'
           - '@verifylogout'
+          - '@verifyproducts'
           - '@createnewaccount'
+          - '@verifytestcasespage'
+          - '@verifycontactusform'
           - '@verifyRegisterWithExistingEmail'
       feature:
         description: 'Feature file path (e.g. features/login.feature)'
