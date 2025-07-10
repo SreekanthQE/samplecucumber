@@ -1,8 +1,6 @@
 import { LoginPageLocators } from '../pageobjects/loginPageLocators.js';
 import 'dotenv/config';
-import { playwrightUtils as pw } from '../utils/playwrightUtils.js';
-import { FakerUtils } from '../utils/fakerUtils.js';
-
+import * 
 
 export class LoginPage {
     async userClicksOnLogoutButton(){

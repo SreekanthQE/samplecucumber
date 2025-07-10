@@ -1,6 +1,7 @@
 import { setDefaultTimeout, After, Before, AfterStep } from '@cucumber/cucumber';
 import * as playwright from 'playwright';
 import { pageFixture } from './pageFixture.js';
+import { setPage, setContext } from 'playwright-ultimate-utils';
 
 setDefaultTimeout(60000); // Set global step timeout to 60 seconds
 
@@ -26,6 +27,8 @@ Before({ timeout: 15000 }, async function () {
   pageFixture.setBrowser(browser);
   pageFixture.setContext(context);
   pageFixture.setPage(page);
+  setContext(context);
+  setPage(page);
 });
 
 AfterStep(async function () {
