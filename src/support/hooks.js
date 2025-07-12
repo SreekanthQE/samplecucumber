@@ -1,7 +1,6 @@
 import { setDefaultTimeout, After, Before, AfterStep } from '@cucumber/cucumber';
 import * as playwright from 'playwright';
-import { pageFixture } from './pageFixture.js';
-
+import * as magicUtils from 'playwright-magic-utils';
 setDefaultTimeout(60000); // Set global step timeout to 60 seconds
 
 Before({ timeout: 15000 }, async function () {
@@ -18,47 +17,37 @@ Before({ timeout: 15000 }, async function () {
     headless: headless,
   });
   const context = await browser.newContext({
-    viewport: {width: 1520, height: 728}
+    viewport: { width: 1520, height: 728 }
   });
   const page = await context.newPage();
 
-  // Set on singleton instance
-  pageFixture.setBrowser(browser);
-  pageFixture.setContext(context);
-  pageFixture.setPage(page);
+  magicUtils.setContext(context);
+  magicUtils.setPage(page);
+
 });
 
 AfterStep(async function () {
-  const page = pageFixture.getPage();
+  const page = magicUtils.getPage();
   if (!page) return;
+
   try {
     const screenshot = await page.screenshot();
-    await this.attach(screenshot, 'image/png');
+    this.attach(screenshot, 'image/png');
   } catch (err) {
     console.error('Error capturing screenshot in AfterStep:', err);
-    throw err; // Always re-throw so Allure and Cucumber see the error
+    throw err;
   }
 });
 
 After(async function () {
   try {
-    const page = pageFixture.getPage();
-    if (page) {
-      const context = page.context();
-      const browser = context.browser();
-      await page.close();
-      await context.close();
-      await browser.close();
-      pageFixture.setPage(null);
-      pageFixture.setContext(null);
-      pageFixture.setBrowser(null);
-    }
+    await magicUtils.closeAll();
+    await magicUtils.setPage(null);
+    await magicUtils.setContext(null);
   } catch (err) {
-    console.error('Error during browser/page cleanup in After hook:', err);
-    throw err; // Always re-throw so Allure and Cucumber see the error
+    console.error('Error during cleanup in After hook:', err);
+    throw err;
   }
-  console.log('Test scenario cleanup complete. Browser, context, and page closed.');
+
+  console.log('✅ Test scenario cleanup complete. Resources closed.');
 });
-
-
-

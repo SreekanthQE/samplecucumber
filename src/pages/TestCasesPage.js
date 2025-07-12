@@ -1,4 +1,3 @@
-import { playwrightUtils as pw } from '../utils/playwrightUtils.js';
 
 
 export class TestCasesPage{

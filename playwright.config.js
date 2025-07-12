@@ -20,9 +20,6 @@ const config = {
     { name: 'Firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'WebKit', use: { ...devices['Desktop Safari'] } },
   ],
-  // globalSetup: require.resolve('./src/support/global-setup.js'),
-  // globalTeardown: require.resolve('./src/support/global-teardown.js'),
-  // webServer: { ... }
 };
 
 export default config;

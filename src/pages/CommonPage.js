@@ -1,15 +1,16 @@
 import { LoginPageLocators } from '../pageobjects/loginPageLocators.js';
-import { playwrightUtils as pw } from '../utils/playwrightUtils.js';
+import * as utils from 'playwright-magic-utils';
 
 export class CommonPage{
 
     async userNavigateToApplicationURL(){
-        await pw.navigateTo(process.env.BASE_URL);
+        await utils.gotoURL(process.env.APP_BASE_URL);
+        await utils.waitForPageLoad();
     }
     async userClicksOnSubMenu(menuText){
-         await pw.clickSingleElementInAllElements(LoginPageLocators.HomePageAllMenus, menuText);
+        await utils.clickEleByText(menuText);
     }
     async userLandsOnApplicationHomePage(){
-         await pw.verifyURL('account/account');
+        await utils.expectUrlToMatch('account/account');
     }
 }

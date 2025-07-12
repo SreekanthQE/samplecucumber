@@ -20,6 +20,10 @@
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
-    "dotenv": "^16.5.0"
+    "dotenv": "^16.5.0",
+    "playwright-magic-utils": "^1.0.80"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.53.1"
   }
 }
