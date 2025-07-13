@@ -1,11 +1,7 @@
 import { LoginPageLocators } from '../pageobjects/loginPageLocators.js';
 import 'dotenv/config';
-<<<<<<< HEAD
 import * as utils from 'playwright-magic-utils';
 
-=======
-import * 
->>>>>>> 58afde6f4ac6d6fdef5d4f19dd11695b7a6b8758
 
 export class LoginPage {
     async userClicksOnLogoutButton(){

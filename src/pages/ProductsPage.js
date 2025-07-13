@@ -1,11 +1,5 @@
 import { expect } from "@playwright/test";
 import { ProductsPageLocators } from "../pageobjects/productsPageLocators.js"
-<<<<<<< HEAD
-
-=======
-import { pageFixture } from "../support/pageFixture.js"
-import * as utils  from 'playwright-ultimate-utils';
->>>>>>> 58afde6f4ac6d6fdef5d4f19dd11695b7a6b8758
 
 export class ProductsPage{
     async userVerifiesAllProductsVisible(){
